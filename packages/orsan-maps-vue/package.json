@@ -1,0 +1,21 @@
+{
+  "name": "orsan-maps-vue",
+  "version": "1.0.0",
+  "description": "Mapa de estaciones Orsan (Vue 3 + Mapbox + filtros). Copiar esta carpeta a otro proyecto.",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./theme.css": "./src/styles/orsan-maps-theme.css"
+  },
+  "dependencies": {
+    "mapbox-gl": "^3.0.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "keywords": ["orsan", "mapbox", "vue", "gasolineras"],
+  "license": "UNLICENSED"
+}

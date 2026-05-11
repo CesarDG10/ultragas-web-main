@@ -1,0 +1,37 @@
+/**
+ * Importar en el CSS principal del host DESPUÉS de tailwind, por ejemplo:
+ *   @import "tailwindcss";
+ *   @import "./ruta/a/orsan-maps-vue/src/styles/orsan-maps-theme.css";
+ */
+@theme {
+  --color-brand-red: #e31c23;
+  --color-brand-dark: #1d1d1b;
+  --color-brand-purple: #8434e1;
+  --color-brand-blue: #2573d9;
+  --color-brand-gray: #333333;
+  --color-brand-light: #f4f4f4;
+}
+
+@layer utilities {
+  .gradient-text-brand {
+    background: linear-gradient(to right, #2573d9 0%, #8434e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: #e5e7eb;
+  border-radius: 20px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #d1d5db;
+}

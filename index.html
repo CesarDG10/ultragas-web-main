@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UltraGas Control Card</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- Pipedrive LeadBooster (chat) -->
+    <script>
+      window.pipedriveLeadboosterConfig = {
+        base: 'leadbooster-chat.pipedrive.com',
+        companyId: 13395962,
+        playbookUuid: 'cd5c6683-9964-4775-9470-efaa7ce0a2f9',
+        version: 2,
+      };
+      (function () {
+        var w = window;
+        if (w.LeadBooster) {
+          console.warn('LeadBooster already exists');
+        } else {
+          w.LeadBooster = {
+            q: [],
+            on: function (n, h) {
+              this.q.push({ t: 'o', n: n, h: h });
+            },
+            trigger: function (n) {
+              this.q.push({ t: 't', n: n });
+            },
+          };
+        }
+      })();
+    </script>
+    <script src="https://leadbooster-chat.pipedrive.com/assets/loader.js" async></script>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
