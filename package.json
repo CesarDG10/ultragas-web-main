@@ -9,6 +9,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:pruebas": "vite build --mode pruebas --base /Pruebas/",
+    "build:sitio": "vite build --mode sitio --base /",
     "preview": "vite preview"
   },
   "dependencies": {

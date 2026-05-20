@@ -45,7 +45,12 @@
 
       <!-- Desktop CTAs -->
       <div class="hidden md:flex items-center gap-4">
-        <AccessDropdown afiliados-url="https://ultragas.com.mx/Afiliadas/" clientes-url="https://ultragas.com.mx/Consultas2/" />
+        <AccessDropdown
+          afiliados-url="https://ultragas.com.mx/Afiliadas/"
+          clientesviejo-url="https://ultragas.com.mx/Consultas2/"
+          clientesnuevo-url="https://ultragas.com.mx/Clientes"
+          @open-portal-modal="openPortalModal"
+        />
         <button
           @click="openModal('Contratar Ahora')"
           class="bg-gradient-to-r from-brand-blue to-brand-purple text-white text-sm font-semibold px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-brand-purple/30 transition-all"
@@ -65,6 +70,12 @@
       </button>
     </div>
   </header>
+
+  <!-- Portal Modal -->
+  <PortalModal
+    clientesviejo-url="https://ultragas.com.mx/Consultas2/"
+    clientesnuevo-url="https://ultragas.com.mx/Clientes"
+  />
 
   <!-- Mobile Drawer Overlay -->
   <Teleport to="body">
@@ -186,10 +197,13 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useContactModal } from '../composables/useContactModal'
 import { useVideoModal } from '../composables/useVideoModal'
+import { usePortalModal } from '../composables/usePortalModal'
 import AccessDropdown from './AccessDropdown.vue'
+import PortalModal from './PortalModal.vue'
 
 const { openModal } = useContactModal()
 const { openVideo } = useVideoModal()
+const { openPortalModal } = usePortalModal()
 
 const scrolled = ref(false)
 const mobileOpen = ref(false)

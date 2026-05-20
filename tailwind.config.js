@@ -9,12 +9,13 @@ export default {
     extend: {
       colors: {
         brand: {
-          red:    '#E31C23',
-          dark:   '#1D1D1B',
-          purple: '#8434E1',
-          blue:   '#2573D9',
-          gray:   '#333333',
-          light:  '#F4F4F4',
+          red:      '#E31C23',
+          dark:     '#1D1D1B',
+          bluedark: '#13316d',
+          purple:   '#8434E1',
+          blue:     '#2573D9',
+          gray:     '#333333',
+          light:    '#F4F4F4',
         },
       },
       fontFamily: {

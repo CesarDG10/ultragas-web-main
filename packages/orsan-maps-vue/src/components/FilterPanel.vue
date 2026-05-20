@@ -48,26 +48,59 @@
             placeholder="Ciudad, Estado o Nombre de Estación"
             class="w-full pl-11 pr-4 py-3.5 bg-white border-2 border-gray-200 rounded-2xl text-gray-900 text-base shadow-sm focus:ring-2 focus:ring-[#2573D9]/20 focus:border-[#2573D9] transition-all outline-none"
           />
-          <!-- Dropdown de predicciones de Google Places -->
-          <div 
-            v-if="showPredictions && predictions.length > 0"
+          <!-- Dropdown combinado: estaciones + ubicaciones Google Places -->
+          <div
+            v-if="showPredictions && (stationSuggestions.length > 0 || predictions.length > 0)"
             class="absolute z-50 w-full mt-2 bg-white border-2 border-gray-200 rounded-2xl shadow-xl max-h-80 overflow-y-auto"
           >
-          <div
-            v-for="prediction in predictions"
-            :key="prediction.placeId"
-            @mousedown="handlePredictionSelect(prediction)"
-            class="px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors duration-150 border-b border-gray-100 last:border-b-0 rounded-2xl"
-          >
-            <div class="flex items-start gap-3">
-              <i class="fa-solid fa-location-dot text-brand-blue mt-0.5 flex-shrink-0"></i>
-              <div class="flex-1 min-w-0">
-                <div class="font-semibold text-gray-900 truncate">{{ prediction.mainText }}</div>
-                <div class="text-sm text-gray-500 truncate">{{ prediction.secondaryText }}</div>
+            <!-- Sección Estaciones -->
+            <div v-if="stationSuggestions.length > 0">
+              <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50 border-b border-gray-100 flex items-center gap-1.5">
+                <i class="fa-solid fa-gas-pump"></i> Estaciones
+              </div>
+              <div
+                v-for="station in stationSuggestions"
+                :key="station.id"
+                @mousedown="handleStationSelect(station)"
+                class="px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors duration-150 border-b border-gray-100 last:border-b-0"
+              >
+                <div class="flex items-start gap-3">
+                  <i class="fa-solid fa-gas-pump text-brand-blue mt-0.5 flex-shrink-0"></i>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-semibold text-gray-900 truncate">{{ station.name }}</div>
+                    <div class="text-xs text-gray-500 truncate">
+                      {{ [station.address?.city, station.address?.state].filter(Boolean).join(', ') }}
+                      <span v-if="station.folioPemex ?? station.folio_pemex" class="ml-1 text-gray-400">· {{ station.folioPemex ?? station.folio_pemex }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Separador entre secciones -->
+            <div v-if="stationSuggestions.length > 0 && predictions.length > 0" class="border-t border-gray-200"></div>
+
+            <!-- Sección Ubicaciones (Google Places) -->
+            <div v-if="predictions.length > 0">
+              <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50 border-b border-gray-100 flex items-center gap-1.5">
+                <i class="fa-solid fa-location-dot"></i> Ubicaciones
+              </div>
+              <div
+                v-for="prediction in predictions"
+                :key="prediction.placeId"
+                @mousedown="handlePredictionSelect(prediction)"
+                class="px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors duration-150 border-b border-gray-100 last:border-b-0"
+              >
+                <div class="flex items-start gap-3">
+                  <i class="fa-solid fa-location-dot text-brand-blue mt-0.5 flex-shrink-0"></i>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-semibold text-gray-900 truncate">{{ prediction.mainText }}</div>
+                    <div class="text-sm text-gray-500 truncate">{{ prediction.secondaryText }}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
         <!-- Indicador de carga -->
         <div v-if="isSearching" class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
@@ -310,30 +343,12 @@
       </div>
     </div>
 
-    <!-- Footer con botones -->
-    <div class="p-6 border-t border-gray-200 bg-white flex-none">
-      <div class="flex gap-3">
-        <button
-          @click="handleFilter"
-          class="flex-1 bg-gradient-to-r from-brand-blue to-brand-purple text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
-        >
-          <i class="fa-solid fa-filter"></i>
-          Filtrar
-        </button>
-        <button
-          @click="handleCancel"
-          class="flex-1 bg-white border-2 border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3.5 px-4 rounded-2xl transition-all hover:border-gray-300"
-        >
-          Cancelar
-        </button>
-      </div>
-    </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted } from 'vue'
+import { ref, watch, computed, onMounted, nextTick } from 'vue'
 import { useGooglePlacesAutocomplete } from '../composables/useGooglePlacesAutocomplete.js'
 
 const props = defineProps({
@@ -352,10 +367,14 @@ const props = defineProps({
   isMobile: {
     type: Boolean,
     default: false
+  },
+  stations: {
+    type: Array,
+    default: () => []
   }
 })
 
-const emit = defineEmits(['filter', 'cancel', 'expand', 'location-selected', 'close'])
+const emit = defineEmits(['filter', 'cancel', 'expand', 'location-selected', 'close', 'station-selected'])
 
 // Referencia al input de búsqueda
 const searchInputRef = ref(null)
@@ -377,6 +396,8 @@ const {
 
 // Debounce timer para la búsqueda
 let searchDebounceTimer = null
+// Flag para evitar el loop: props → estado interno → emit → props → ...
+let syncingFromProps = false
 
 const PRODUCT_KEYS = ['premium', 'magna', 'diesel', 'dieselUba']
 
@@ -394,6 +415,26 @@ function parseInitialProducts(products) {
   return out
 }
 
+const normalize = (str) =>
+  (str || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+const stationSuggestions = computed(() => {
+  if (!searchQuery.value || searchQuery.value.trim().length < 2) return []
+  const term = normalize(searchQuery.value.trim())
+  return (props.stations || [])
+    .filter(station => {
+      return (
+        normalize(station.name).includes(term) ||
+        normalize(station.folioPemex ?? station.folio_pemex).includes(term) ||
+        normalize(station.creID ?? station.cre_id).includes(term) ||
+        normalize(station.plCode ?? station.pl_code).includes(term) ||
+        normalize(station.address?.city).includes(term) ||
+        normalize(station.address?.state).includes(term)
+      )
+    })
+    .slice(0, 5)
+})
+
 const searchQuery = ref(props.initialFilters.searchQuery || '')
 const selectedProducts = ref(parseInitialProducts(props.initialFilters.products ?? props.initialFilters.product))
 const selectedAmenities = ref({
@@ -408,6 +449,7 @@ const selectedAmenities = ref({
 
 // Observar cambios en los filtros iniciales
 watch(() => props.initialFilters, (newFilters) => {
+  syncingFromProps = true
   searchQuery.value = newFilters.searchQuery || ''
   selectedProducts.value = parseInitialProducts(newFilters.products ?? newFilters.product)
   if (newFilters.amenities) {
@@ -421,35 +463,37 @@ watch(() => props.initialFilters, (newFilters) => {
       hasTruckStop: newFilters.amenities.hasTruckStop || false
     }
   }
+  nextTick(() => { syncingFromProps = false })
 }, { deep: true })
 
 const handleSearchInput = () => {
-  // Limpiar el timer anterior
   if (searchDebounceTimer) {
     clearTimeout(searchDebounceTimer)
   }
-  
-  // Si el query está vacío, limpiar predicciones
+
   if (!searchQuery.value || searchQuery.value.trim().length === 0) {
     clearPredictions()
     showPredictions.value = false
+    handleFilter()
     return
   }
-  
-  // Esperar 300ms después de que el usuario deje de escribir para buscar
+
+  showPredictions.value = true
   searchDebounceTimer = setTimeout(() => {
     searchPlaces(searchQuery.value)
   }, 300)
 }
 
+const handleStationSelect = (station) => {
+  searchQuery.value = station.name
+  showPredictions.value = false
+  clearPredictions()
+  emit('station-selected', station)
+}
+
 const handlePredictionSelect = (prediction) => {
-  // Seleccionar la predicción y obtener detalles del lugar
   selectPrediction(prediction)
-  
-  // Actualizar el input con el texto de la predicción
   searchQuery.value = prediction.mainText
-  
-  // Ocultar dropdown
   showPredictions.value = false
 }
 
@@ -470,7 +514,7 @@ const handleEnterKey = (event) => {
   
   // Si no hay predicciones o están ocultas, aplicar el filtro como búsqueda de texto
   if (searchQuery.value && searchQuery.value.trim()) {
-    console.log('Enter presionado sin selección de ubicación, aplicando filtro de texto')
+    //console.log('Enter presionado sin selección de ubicación, aplicando filtro de texto')
     // Ocultar predicciones si están visibles
     showPredictions.value = false
     clearPredictions()
@@ -480,10 +524,16 @@ const handleEnterKey = (event) => {
   }
 }
 
+watch([selectedProducts, selectedAmenities], () => {
+  if (!syncingFromProps) {
+    handleFilter()
+  }
+}, { deep: true })
+
 // Observar cambios en selectedPlace para emitir el evento de selección de ubicación
 watch(selectedPlace, (newPlace) => {
   if (newPlace && newPlace.location) {
-    console.log('Ubicación geográfica seleccionada:', newPlace)
+    //console.log('Ubicación geográfica seleccionada:', newPlace)
     // Emitir evento con los datos de la ubicación
     emit('location-selected', {
       name: newPlace.name,

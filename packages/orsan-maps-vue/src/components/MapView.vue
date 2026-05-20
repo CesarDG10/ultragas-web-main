@@ -1,10 +1,19 @@
 <template>
-  <div class="w-full h-full overflow-hidden">
+  <div :class="[isFullscreen ? 'fixed inset-0 z-[9999] bg-white' : 'w-full h-full overflow-hidden', fullscreenAnimClass]">
     <!-- Layout Desktop -->
     <div v-if="!isMobile" class="flex w-full h-full">
       <!-- Mapa -->
       <div class="relative flex-1 h-full">
         <div ref="mapContainerRef" class="w-full h-full orsan-map-canvas"></div>
+
+        <!-- Botón fullscreen -->
+        <button
+          @click="toggleFullscreen"
+          class="absolute top-4 left-4 z-20 bg-gradient-to-br from-gray-900 to-gray-600 backdrop-blur-sm rounded-xl shadow-lg p-4 hover:bg-gray hover:-translate-y-0.5 transition-all focus:outline-none"
+          :title="isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'"
+        >
+          <i :class="isFullscreen ? 'fa-solid fa-compress' : 'fa-solid fa-expand'" class="text-white text-xl"></i>
+        </button>
 
         <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
           <div class="text-center">
@@ -32,10 +41,12 @@
         <FilterPanel
           :initial-filters="currentFilters"
           :collapsed="!!selectedStation"
+          :stations="allStations"
           @filter="applyFilters"
           @cancel="cancelFilters"
           @expand="closeStationDetails"
           @location-selected="handleLocationSelected"
+          @station-selected="handleStationFromFilter"
         />
       </div>
     </div>
@@ -117,7 +128,7 @@
         >
           <i class="fa-solid fa-filter text-xl"></i>
           <!-- Badge con número de filtros activos -->
-          <span 
+          <span
             v-if="mobileActiveFiltersCount > 0"
             class="absolute -top-1 -right-1 flex items-center justify-center min-w-[22px] h-[22px] px-1.5 text-xs font-bold text-white bg-white/30 rounded-full"
           >
@@ -125,6 +136,15 @@
           </span>
         </button>
       </div>
+
+      <!-- Botón fullscreen flotante (debajo del botón de filtros) -->
+      <button
+        @click="toggleFullscreen"
+        class="absolute top-20 right-4 z-20 bg-gradient-to-br from-gray-900 to-gray-600 backdrop-blur-sm rounded-xl shadow-lg p-4 hover:-translate-y-0.5 transition-all focus:outline-none map-mobile-controls"
+        :title="isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'"
+      >
+        <i :class="isFullscreen ? 'fa-solid fa-compress' : 'fa-solid fa-expand'" class="text-white text-xl"></i>
+      </button>
 
       <!-- Panel de filtros fullscreen en móvil -->
       <div
@@ -135,10 +155,12 @@
           :initial-filters="currentFilters"
           :collapsed="false"
           :is-mobile="true"
+          :stations="allStations"
           @filter="handleMobileFilter"
           @cancel="handleMobileCancel"
           @close="showMobileFilters = false"
           @location-selected="handleLocationSelected"
+          @station-selected="handleStationFromFilter"
         />
       </div>
 
@@ -169,10 +191,9 @@ import StationDetailsPanel from './StationDetailsPanel.vue'
 import { useGooglePlacesAutocomplete } from '../composables/useGooglePlacesAutocomplete.js'
 
 const props = defineProps({
-  /** URL del PNG del marcador (copiar public/icons/ug-marker.png en el proyecto host) */
   markerIconUrl: {
     type: String,
-    default: '/icons/ug-marker.png'
+    default: `${import.meta.env.BASE_URL}icons/ug-marker.png`
   }
 })
 
@@ -180,6 +201,26 @@ const mapContainerRef = ref(null)
 let map = null
 const error = ref(null)
 const loading = ref(true)
+const isFullscreen = ref(false)
+const fullscreenAnimClass = ref('')
+
+function toggleFullscreen() {
+  if (!isFullscreen.value) {
+    isFullscreen.value = true
+    nextTick(() => {
+      if (map) map.resize()
+      fullscreenAnimClass.value = 'map-expanding'
+      setTimeout(() => { fullscreenAnimClass.value = '' }, 320)
+    })
+  } else {
+    fullscreenAnimClass.value = 'map-collapsing'
+    setTimeout(() => {
+      isFullscreen.value = false
+      fullscreenAnimClass.value = ''
+      nextTick(() => setTimeout(() => { if (map) map.resize() }, 50))
+    }, 280)
+  }
+}
 const loadingStations = ref(false)
 
 const currentFilters = ref({
@@ -237,6 +278,7 @@ const mobileActiveFiltersCount = computed(() => {
   return count
 })
 
+
 // Observar cambios en selectedStation para redimensionar el mapa
 watch(selectedStation, async () => {
   // Esperar a que Vue actualice el DOM
@@ -247,7 +289,7 @@ watch(selectedStation, async () => {
     if (map) {
       // Forzar redimensionamiento del mapa
       map.resize()
-      console.log('Mapa redimensionado')
+      //console.log('Mapa redimensionado')
     }
   }, 350) // Esperar 350ms (un poco más que la duración de la transición de 300ms)
 })
@@ -410,7 +452,7 @@ function applyCustomRoadColors(mapInstance) {
       }
     } catch (err) {
       // Ignorar errores silenciosamente - algunas capas pueden no ser modificables
-      console.debug(`No se pudo modificar la capa ${layer.id}`)
+      //console.debug(`No se pudo modificar la capa ${layer.id}`)
     }
   })
 }
@@ -497,7 +539,7 @@ async function fetchStations(latitude, longitude, radius, filters = {}) {
     }
     
     const responseData = await response.json()
-    console.log('Datos recibidos del API:', responseData)
+    //console.log('Datos recibidos del API:', responseData)
     
     // La estructura esperada es: data -> array de estaciones
     // Cada estación tiene: index -> location -> lat / lon
@@ -511,10 +553,10 @@ async function fetchStations(latitude, longitude, radius, filters = {}) {
     }
     
     // Si no se puede determinar, retornar array vacío
-    console.warn('Formato de respuesta del API no reconocido:', responseData)
+    //console.warn('Formato de respuesta del API no reconocido:', responseData)
     return []
   } catch (err) {
-    console.error('Error al obtener estaciones:', err)
+    //console.error('Error al obtener estaciones:', err)
     error.value = `Error al obtener estaciones: ${err.message}`
     return []
   } finally {
@@ -628,7 +670,7 @@ function filterStations(stations) {
 
 // Función para actualizar las estaciones en el mapa
 async function updateStations() {
-  console.log('updateStations() llamado')
+  //console.log('updateStations() llamado')
   if (!map) {
     console.error('Map no está disponible en updateStations()')
     return
@@ -637,13 +679,13 @@ async function updateStations() {
   const center = map.getCenter()
   const radius = calculateRadiusFromMap(map)
   
-  console.log(`Buscando estaciones cerca de (${center.lat}, ${center.lng}) con radio de ${radius} km`)
-  console.log('Filtros actuales:', currentFilters.value)
-  console.log('Llamando a fetchStations...')
+  //console.log(`Buscando estaciones cerca de (${center.lat}, ${center.lng}) con radio de ${radius} km`)
+  //console.log('Filtros actuales:', currentFilters.value)
+  //console.log('Llamando a fetchStations...')
   
   // Pasar los filtros actuales al endpoint
   const stations = await fetchStations(center.lat, center.lng, radius, currentFilters.value)
-  console.log(`Estaciones recibidas: ${stations.length}`)
+  //console.log(`Estaciones recibidas: ${stations.length}`)
   
   // Guardar todas las estaciones recibidas (ya vienen filtradas del backend)
   allStations.value = stations
@@ -665,15 +707,15 @@ async function updateStations() {
   if (source) {
     source.setData(geoJSON)
     if (stations && stations.length > 0) {
-      console.log(`Actualizadas ${geoJSON.features.length} estaciones en el mapa`)
+      //console.log(`Actualizadas ${geoJSON.features.length} estaciones en el mapa`)
     } else {
-      console.log('No se encontraron estaciones en el área visible')
+      //console.log('No se encontraron estaciones en el área visible')
     }
     
     // Actualizar los colores de los puntos después de actualizar los datos
     updatePointColors()
   } else {
-    console.warn('La fuente de datos "gasolineras" no existe aún')
+    //console.warn('La fuente de datos "gasolineras" no existe aún')
   }
 }
 
@@ -751,7 +793,7 @@ async function handleMobilePredictionSelect(prediction) {
       handleLocationSelected(placeDetails)
     }
   } catch (error) {
-    console.error('Error al obtener detalles del lugar:', error)
+    //console.error('Error al obtener detalles del lugar:', error)
   }
 }
 
@@ -772,7 +814,7 @@ function handleLocationSelected(locationData) {
     return
   }
   
-  console.log('Centrando mapa en:', locationData)
+  //console.log('Centrando mapa en:', locationData)
   
   const { location, viewport, name } = locationData
   
@@ -824,10 +866,19 @@ function handleLocationSelected(locationData) {
   // Agregar un pequeño delay para asegurar que el mapa esté en su nueva posición
   map.once('moveend', () => {
     setTimeout(() => {
-      console.log('Actualizando estaciones en la nueva ubicación...')
+      //console.log('Actualizando estaciones en la nueva ubicación...')
       updateStations()
     }, 300)
   })
+}
+
+// Seleccionar una estación desde las sugerencias del FilterPanel
+function handleStationFromFilter(station) {
+  const location = station?.location
+  if (!location) return
+  const coordinates = [parseFloat(location.longitude), parseFloat(location.latitude)]
+  selectStation(station, coordinates)
+  showMobileFilters.value = false
 }
 
 // Funciones para manejar la selección de estaciones
@@ -984,7 +1035,7 @@ onMounted(async () => {
     {
       if (!MAPBOX_TOKEN) {
         error.value = 'Token de Mapbox no configurado'
-        console.error('Token de Mapbox no encontrado')
+        //console.error('Token de Mapbox no encontrado')
         loading.value = false
         return
       }
@@ -994,7 +1045,7 @@ onMounted(async () => {
       const mapContainer = mapContainerRef.value
       if (!mapContainer) {
         error.value = 'Contenedor del mapa no encontrado'
-        console.error('No se encontró el contenedor del mapa (ref)')
+        //console.error('No se encontró el contenedor del mapa (ref)')
         loading.value = false
         return
       }
@@ -1018,12 +1069,12 @@ onMounted(async () => {
 
       map.on('error', (e) => {
         error.value = `Error de Mapbox: ${e.error?.message || 'Error desconocido'}`
-        console.error('Error de Mapbox:', e)
+        //console.error('Error de Mapbox:', e)
         loading.value = false
       })
 
       map.on('load', async () => {
-        console.log('Mapa cargado correctamente')
+        //console.log('Mapa cargado correctamente')
         error.value = null
         loading.value = false
 
@@ -1073,28 +1124,28 @@ onMounted(async () => {
           ctx.fillStyle = 'rgba(255,255,255,0.9)'
           ctx.fill()
           map.addImage('ug-marker', ctx.getImageData(0, 0, W, H))
-          console.log('Icono UG generado con canvas')
+          //console.log('Icono UG generado con canvas')
         }
 
         try {
           map.loadImage(props.markerIconUrl, (err, image) => {
             if (err) {
-              console.warn('PNG de marcador no encontrado, usando canvas:', err.message)
+              //console.warn('PNG de marcador no encontrado, usando canvas:', err.message)
               addUGMarkerFromCanvas()
               return
             }
             if (!map.hasImage('ug-marker')) {
               map.addImage('ug-marker', image)
-              console.log('Icono UG PNG cargado correctamente')
+              //console.log('Icono UG PNG cargado correctamente')
             }
           })
         } catch (err) {
-          console.warn('Error al cargar icono UG, usando canvas:', err)
+          //console.warn('Error al cargar icono UG, usando canvas:', err)
           addUGMarkerFromCanvas()
         }
 
         // Inicializar la fuente de datos con un FeatureCollection vacío
-        console.log('Inicializando fuente de datos de estaciones...')
+        //console.log('Inicializando fuente de datos de estaciones...')
         map.addSource('gasolineras', {
           type: 'geojson',
           data: {
@@ -1263,7 +1314,7 @@ onMounted(async () => {
           try {
             station = props.stationData ? JSON.parse(props.stationData) : null
           } catch (err) {
-            console.error('Error al parsear datos de la estación:', err)
+            //console.error('Error al parsear datos de la estación:', err)
           }
 
           if (!station) {
@@ -1290,7 +1341,7 @@ onMounted(async () => {
         })
 
         // Cargar estaciones iniciales
-        console.log('Llamando a updateStations()...')
+        //console.log('Llamando a updateStations()...')
         updateStations()
 
         // Actualizar estaciones cuando el mapa se mueva o haga zoom
@@ -1310,12 +1361,12 @@ onMounted(async () => {
       })
 
       map.on('style.load', () => {
-        console.log('Estilo del mapa cargado')
+        //console.log('Estilo del mapa cargado')
       })
     }
   } catch (err) {
     error.value = `Error al inicializar el mapa: ${err.message}`
-    console.error('Error al inicializar el mapa:', err)
+    //console.error('Error al inicializar el mapa:', err)
     loading.value = false
   }
 })
@@ -1325,7 +1376,8 @@ onUnmounted(() => {
   if (pulseAnimationId) {
     cancelAnimationFrame(pulseAnimationId)
   }
-  
+
+
   // Remover listener de resize
   window.removeEventListener('resize', checkMobile)
   
@@ -1340,5 +1392,35 @@ onUnmounted(() => {
 .map-mobile-controls {
   touch-action: manipulation;
   pointer-events: auto;
+}
+
+.map-expanding {
+  animation: map-expand 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.map-collapsing {
+  animation: map-collapse 0.28s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes map-expand {
+  from {
+    opacity: 0.5;
+    transform: scale(0.93);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes map-collapse {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.5;
+    transform: scale(0.93);
+  }
 }
 </style>

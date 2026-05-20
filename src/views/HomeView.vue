@@ -1,5 +1,6 @@
 <template>
   <div class="bg-slate-50 text-slate-900">
+    <HomeAnnouncementModal />
     <AppHeader />
     <main>
       <HeroSection />
@@ -17,6 +18,7 @@
 </template>
 
 <script setup>
+import HomeAnnouncementModal from '../components/HomeAnnouncementModal.vue'
 import AppHeader from '../components/AppHeader.vue'
 import AppFooter from '../components/AppFooter.vue'
 import SolicitarInfoCta from '../components/SolicitarInfoCta.vue'

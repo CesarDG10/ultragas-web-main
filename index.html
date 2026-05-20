@@ -8,35 +8,14 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0"
+      crossorigin="anonymous"
     />
   </head>
   <body>
     <div id="app"></div>
     <!-- Pipedrive LeadBooster (chat) -->
-    <script>
-      window.pipedriveLeadboosterConfig = {
-        base: 'leadbooster-chat.pipedrive.com',
-        companyId: 13395962,
-        playbookUuid: 'cd5c6683-9964-4775-9470-efaa7ce0a2f9',
-        version: 2,
-      };
-      (function () {
-        var w = window;
-        if (w.LeadBooster) {
-          console.warn('LeadBooster already exists');
-        } else {
-          w.LeadBooster = {
-            q: [],
-            on: function (n, h) {
-              this.q.push({ t: 'o', n: n, h: h });
-            },
-            trigger: function (n) {
-              this.q.push({ t: 't', n: n });
-            },
-          };
-        }
-      })();
-    </script>
+    <script src="/pipedrive-init.js"></script>
     <script src="https://leadbooster-chat.pipedrive.com/assets/loader.js" async></script>
     <script type="module" src="/src/main.js"></script>
   </body>
