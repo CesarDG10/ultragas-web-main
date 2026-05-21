@@ -142,8 +142,3 @@ body {
 .sidebar-scroll::-webkit-scrollbar-thumb:hover {
   background-color: #d1d5db;
 }
-
-/* Ocultar chatbot en la página del mapa */
-body.hide-chatbot #pipedrive-chat-holder {
-  display: none !important;
-}

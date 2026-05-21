@@ -17,13 +17,14 @@
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import { MAPBOX_TOKEN } from 'orsan-maps-vue'
 import { CDMX, highlightedCities, ambientPointsCoords } from '../../data/mexicoMapPoints.js'
 
 const mapContainer = ref(null)
 const map = ref(null)
 let animId = null
 
-const token = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+const token = MAPBOX_TOKEN
 
 // Bounding box exacto de México continental
 const MEXICO_BOUNDS = [[-118.5, 14.3], [-86.5, 32.72]]

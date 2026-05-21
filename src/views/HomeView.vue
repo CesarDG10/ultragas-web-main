@@ -1,6 +1,5 @@
 <template>
   <div class="bg-slate-50 text-slate-900">
-    <HomeAnnouncementModal />
     <AppHeader />
     <main>
       <HeroSection />
@@ -18,18 +17,6 @@
 </template>
 
 <script setup>
-import { useHead } from '@unhead/vue'
-import HomeAnnouncementModal from '../components/HomeAnnouncementModal.vue'
-
-useHead({
-  title: 'UltraGas Control Card | Control Inteligente de Combustible',
-  meta: [
-    { name: 'description', content: 'Controla el combustible de tu flota con tecnología avanzada. Elimina fugas, autoriza cargas, monitorea transacciones en tiempo real y recibe alertas instantáneas. Red de más de 2,000 estaciones en México.' },
-    { property: 'og:title', content: 'UltraGas Control Card | Control Inteligente de Combustible' },
-    { property: 'og:description', content: 'Controla el combustible de tu flota con tecnología avanzada. Elimina fugas, autoriza cargas y monitorea transacciones en tiempo real.' },
-    { property: 'og:url', content: 'https://www.ultragas.com.mx/' },
-  ],
-})
 import AppHeader from '../components/AppHeader.vue'
 import AppFooter from '../components/AppFooter.vue'
 import SolicitarInfoCta from '../components/SolicitarInfoCta.vue'

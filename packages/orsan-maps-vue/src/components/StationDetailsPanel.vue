@@ -50,53 +50,93 @@
         </a>
       </div>
 
-      <!-- Combustibles disponibles -->
+      <!-- Servicios/Combustibles - Estilo letreros de precio -->
       <div v-if="availableServices.length > 0" class="mb-8">
         <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-gas-pump text-brand-purple"></i>
-          Combustibles
+          <i class="fa-solid fa-dollar-sign text-brand-purple"></i>
+          Precios Actuales
         </p>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-3 mb-3">
           <!-- Premium -->
-          <div
+          <div 
             v-if="hasService('premium')"
-            class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex items-center gap-3"
+            class="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden group hover:shadow-xl transition-all cursor-pointer"
           >
-            <div class="absolute -right-3 -top-3 w-14 h-14 bg-white opacity-10 rounded-full"></div>
-            <i class="fa-solid fa-gas-pump text-xl opacity-90 flex-shrink-0"></i>
-            <span class="text-sm font-bold tracking-wider relative z-10">PREMIUM</span>
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-white opacity-10 rounded-full"></div>
+            <div class="relative z-10">
+              <span class="text-xs font-bold tracking-wider opacity-90 block mb-2">PREMIUM</span>
+              <div class="flex items-baseline mb-1">
+                <span class="text-lg font-bold">$</span>
+                <span class="text-4xl font-bold tracking-tight">{{ getPriceInteger('premium') }}</span>
+                <span class="text-lg font-bold">.{{ getPriceDecimals('premium') }}</span>
+              </div>
+              <div class="text-xs opacity-80 font-medium">por litro</div>
+            </div>
           </div>
 
           <!-- Magna -->
-          <div
+          <div 
             v-if="hasService('magna')"
-            class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex items-center gap-3"
+            class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden group hover:shadow-xl transition-all cursor-pointer"
           >
-            <div class="absolute -right-3 -top-3 w-14 h-14 bg-white opacity-10 rounded-full"></div>
-            <i class="fa-solid fa-gas-pump text-xl opacity-90 flex-shrink-0"></i>
-            <span class="text-sm font-bold tracking-wider relative z-10">MAGNA</span>
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-white opacity-10 rounded-full"></div>
+            <div class="relative z-10">
+              <span class="text-xs font-bold tracking-wider opacity-90 block mb-2">MAGNA</span>
+              <div class="flex items-baseline mb-1">
+                <span class="text-lg font-bold">$</span>
+                <span class="text-4xl font-bold tracking-tight">{{ getPriceInteger('magna') }}</span>
+                <span class="text-lg font-bold">.{{ getPriceDecimals('magna') }}</span>
+              </div>
+              <div class="text-xs opacity-80 font-medium">por litro</div>
+            </div>
           </div>
 
           <!-- Diesel -->
-          <div
+          <div 
             v-if="hasService('diesel')"
-            class="bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex items-center gap-3"
-            :class="!hasService('dieselUba') ? 'col-span-2' : ''"
+            class="bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden group hover:shadow-xl transition-all cursor-pointer col-span-2"
           >
-            <div class="absolute -right-3 -top-3 w-14 h-14 bg-white opacity-5 rounded-full"></div>
-            <i class="fa-solid fa-gas-pump text-xl opacity-90 flex-shrink-0"></i>
-            <span class="text-sm font-bold tracking-wider relative z-10">DIÉSEL</span>
+            <div class="absolute -right-8 -top-8 w-32 h-32 bg-white opacity-5 rounded-full"></div>
+            <div class="relative z-10 flex flex-col items-center">
+              <span class="text-xs font-bold tracking-wider opacity-90 mb-2">DIESEL</span>
+              <div class="flex items-baseline">
+                <span class="text-lg font-bold">$</span>
+                <span class="text-4xl font-bold tracking-tight">{{ getPriceInteger('diesel') }}</span>
+                <span class="text-lg font-bold">.{{ getPriceDecimals('diesel') }}</span>
+              </div>
+              <div class="text-xs opacity-80 font-medium mt-1">por litro</div>
+            </div>
           </div>
 
           <!-- Diesel UBA -->
-          <div
+          <div 
             v-if="hasService('dieselUba')"
-            class="bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex items-center gap-3"
-            :class="!hasService('diesel') ? 'col-span-2' : ''"
+            class="bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden group hover:shadow-xl transition-all cursor-pointer"
           >
-            <div class="absolute -right-3 -top-3 w-14 h-14 bg-white opacity-5 rounded-full"></div>
-            <i class="fa-solid fa-gas-pump text-xl opacity-90 flex-shrink-0"></i>
-            <span class="text-sm font-bold tracking-wider relative z-10">DIÉSEL UBA</span>
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-white opacity-10 rounded-full"></div>
+            <div class="relative z-10">
+              <span class="text-xs font-bold tracking-wider opacity-90 block mb-2">DIESEL UBA</span>
+              <div class="flex items-baseline mb-1">
+                <span class="text-lg font-bold">$</span>
+                <span class="text-4xl font-bold tracking-tight">{{ getPriceInteger('dieselUba') }}</span>
+                <span class="text-lg font-bold">.{{ getPriceDecimals('dieselUba') }}</span>
+              </div>
+              <div class="text-xs opacity-80 font-medium">por litro</div>
+            </div>
+          </div>
+        </div>
+        <!-- Disclaimer -->
+        <div class="bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-2xl p-4 mb-8">
+          <div class="flex items-start gap-3">
+            <i class="fa-solid fa-info-circle text-orange-500 text-lg mt-0.5"></i>
+            <div>
+              <p class="text-xs text-orange-800 font-semibold mb-2">
+                Precios, amenidades y Diésel UBA son referenciales y pueden variar al momento de la visita.
+              </p>
+              <p v-if="fechaActualizacionPrecios" class="text-[10px] text-orange-600 font-medium">
+                Actualizados: {{ fechaActualizacionPrecios }}
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-const VIDEO_URL = 'https://www.youtube.com/embed/23yagESFh0M'
+const VIDEO_URL = 'https://www.youtube-nocookie.com/embed/23yagESFh0M'
 
 const isOpen = ref(false)
 const videoUrl = ref('')

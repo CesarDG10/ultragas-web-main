@@ -5,6 +5,14 @@
     <!-- Page Title (offset por el header fixed: h-16 sm:h-20 lg:h-24) -->
     <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 flex-none pt-16 sm:pt-20 lg:pt-24">
       <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <nav class="flex items-center gap-2 text-sm mb-5 sm:mb-6">
+          <RouterLink to="/" class="text-gray-400 hover:text-brand-blue transition-colors flex items-center gap-2">
+            <i class="fa-solid fa-house text-xs"></i>
+            <span>Inicio</span>
+          </RouterLink>
+          <i class="fa-solid fa-chevron-right text-gray-600 text-xs"></i>
+          <span class="text-white font-semibold">Cobertura</span>
+        </nav>
         <div class="flex items-center justify-between gap-4">
           <div>
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-2 sm:mb-4">
@@ -42,30 +50,10 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
-import { useHead } from '@unhead/vue'
 import AppHeader from '../components/AppHeader.vue'
-
-useHead({
-  title: 'Cobertura Nacional | UltraGas Control Card',
-  meta: [
-    { name: 'description', content: 'Encuentra la estación UltraGas más cercana. Red de más de 2,000 estaciones afiliadas a nivel nacional. Consulta el mapa interactivo de cobertura.' },
-    { property: 'og:title', content: 'Cobertura Nacional | UltraGas Control Card' },
-    { property: 'og:description', content: 'Encuentra la estación UltraGas más cercana. Red de más de 2,000 estaciones afiliadas a nivel nacional.' },
-    { property: 'og:url', content: 'https://www.ultragas.com.mx/cobertura' },
-  ],
-})
 import SolicitarInfoCta from '../components/SolicitarInfoCta.vue'
 import AppFooter from '../components/AppFooter.vue'
 import CoverageStatsSection from '../components/stations/CoverageStatsSection.vue'
 import CoverageCtaSection from '../components/stations/CoverageCtaSection.vue'
 import { OrsanMapView } from 'orsan-maps-vue'
-
-onMounted(() => {
-  document.body.classList.add('hide-chatbot')
-})
-
-onUnmounted(() => {
-  document.body.classList.remove('hide-chatbot')
-})
 </script>

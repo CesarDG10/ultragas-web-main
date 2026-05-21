@@ -17,14 +17,15 @@
         v-if="open"
         class="absolute right-0 top-full mt-1 min-w-[200px] py-1.5 bg-white rounded-xl shadow-lg border border-gray-100 z-50"
       >
-        <button
-          type="button"
-          @click="emit('open-portal-modal'); open = false"
-          class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-purple transition-colors first:rounded-t-xl text-left"
+        <a
+          :href="clientesUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-purple transition-colors first:rounded-t-xl"
         >
           <i class="fa-solid fa-user-tie text-gray-400 text-xs w-4 text-center"></i>
-          Portal de Clientes
-        </button>
+          Acceso a clientes
+        </a>
         <a
           :href="afiliadosUrl"
           target="_blank"
@@ -32,7 +33,7 @@
           class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-purple transition-colors last:rounded-b-xl"
         >
           <i class="fa-solid fa-store text-gray-400 text-xs w-4 text-center"></i>
-          Portal de Afiliados
+          Acceso a afiliados
         </a>
       </div>
     </Transition>
@@ -42,11 +43,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const emit = defineEmits(['open-portal-modal'])
-
 defineProps({
-  clientesviejoUrl: { type: String, default: '#' },
-  clientesnuevoUrl: { type: String, default: '#' },
+  clientesUrl: { type: String, default: '#' },
   afiliadosUrl: { type: String, default: '#' },
 })
 

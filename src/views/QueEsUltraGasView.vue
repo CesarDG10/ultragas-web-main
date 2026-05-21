@@ -38,9 +38,9 @@
                 @click="videoPlaying = true"
               >
                 <img
-                  src="https://img.youtube.com/vi/23yagESFh0M/maxresdefault.jpg"
+                  src="/images/ultragas-video-poster.svg"
                   alt="Video explicativo ¿Qué es Ultra Gas? – Control de combustible para flotillas"
-                  class="w-full h-full object-cover opacity-75 group-hover:opacity-85 transition-opacity duration-300"
+                  class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
                 />
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-slate-900/10"></div>
                 <div class="absolute inset-0 flex items-center justify-center">
@@ -60,7 +60,7 @@
               </div>
               <div v-else class="aspect-video bg-slate-900">
                 <iframe
-                  src="https://www.youtube.com/embed/23yagESFh0M?autoplay=1&rel=0"
+                  src="https://www.youtube-nocookie.com/embed/23yagESFh0M?autoplay=1&rel=0"
                   frameborder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowfullscreen
@@ -211,20 +211,9 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useHead } from '@unhead/vue'
 import AppHeader from '../components/AppHeader.vue'
 import AppFooter from '../components/AppFooter.vue'
 import { useContactModal } from '../composables/useContactModal'
-
-useHead({
-  title: '¿Qué es UltraGas? | Control Card para Flotas',
-  meta: [
-    { name: 'description', content: 'Descubre qué es UltraGas Control Card: la tarjeta inteligente para el control de combustible de tu flota. Tecnología avanzada, seguridad total y red nacional de estaciones.' },
-    { property: 'og:title', content: '¿Qué es UltraGas? | Control Card para Flotas' },
-    { property: 'og:description', content: 'La tarjeta inteligente para el control de combustible de tu flota. Tecnología avanzada, seguridad total y red nacional de estaciones.' },
-    { property: 'og:url', content: 'https://www.ultragas.com.mx/que-es-ultragas' },
-  ],
-})
 
 const { openModal } = useContactModal()
 const videoPlaying = ref(false)

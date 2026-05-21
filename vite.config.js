@@ -4,6 +4,9 @@ import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
   plugins: [vue()],
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   resolve: {
     alias: {
       'orsan-maps-vue': fileURLToPath(new URL('./packages/orsan-maps-vue/src/index.js', import.meta.url)),

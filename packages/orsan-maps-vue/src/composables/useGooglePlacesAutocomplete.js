@@ -1,5 +1,6 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { GOOGLE_MAPS_API_KEY } from '../config/google.js'
+import { logger } from '../utils/logger.js'
 
 let googleMapsLoadPromise = null
 
@@ -16,7 +17,7 @@ function loadGoogleMapsScript() {
       return
     }
     const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&language=es`
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&language=es&loading=async`
     script.async = true
     script.defer = true
     script.onload = resolve
@@ -49,7 +50,7 @@ export function useGooglePlacesAutocomplete() {
     // Verificar si la API de Google está disponible
     if (!window.google || !window.google.maps || !window.google.maps.places) {
       error.value = 'Google Maps API no está cargada'
-      //console.error('Google Maps API no disponible')
+      logger.error('Google Maps API no disponible')
       return false
     }
 
@@ -66,11 +67,11 @@ export function useGooglePlacesAutocomplete() {
 
       isLoaded.value = true
       error.value = null
-      //console.log('Servicios de Google Places inicializados correctamente')
+      logger.debug('Servicios de Google Places inicializados correctamente')
       return true
     } catch (err) {
       error.value = `Error al inicializar servicios: ${err.message}`
-      //console.error('Error al inicializar Google Places Services:', err)
+      logger.error('Error al inicializar Google Places Services:', err)
       return false
     }
   }
@@ -85,7 +86,7 @@ export function useGooglePlacesAutocomplete() {
     }
 
     if (!autocompleteService.value) {
-      //console.warn('AutocompleteService no está inicializado')
+      logger.warn('AutocompleteService no está inicializado')
       return
     }
 
@@ -109,17 +110,17 @@ export function useGooglePlacesAutocomplete() {
             mainText: prediction.structured_formatting.main_text,
             secondaryText: prediction.structured_formatting.secondary_text
           }))
-          //console.log('Predicciones encontradas:', predictions.value.length)
+          logger.debug('Predicciones encontradas:', predictions.value.length)
         } else if (status === window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
           predictions.value = []
-          //console.log('No se encontraron resultados')
+          logger.debug('No se encontraron resultados')
         } else {
-          //console.warn('Error al buscar predicciones:', status)
+          logger.warn('Error al buscar predicciones:', status)
           predictions.value = []
         }
       })
     } catch (err) {
-      //console.error('Error en searchPlaces:', err)
+      logger.error('Error en searchPlaces:', err)
       isSearching.value = false
       predictions.value = []
     }
@@ -130,7 +131,7 @@ export function useGooglePlacesAutocomplete() {
    */
   const selectPrediction = async (prediction) => {
     if (!placesService.value || !prediction.placeId) {
-      //console.warn('PlacesService no disponible o placeId inválido')
+      logger.warn('PlacesService no disponible o placeId inválido')
       return
     }
 
@@ -166,16 +167,16 @@ export function useGooglePlacesAutocomplete() {
             addressComponents: place.address_components || []
           }
 
-          //console.log('Lugar seleccionado:', selectedPlace.value)
+          logger.debug('Lugar seleccionado:', selectedPlace.value)
           
           // Limpiar predicciones después de seleccionar
           predictions.value = []
         } else {
-          //console.error('Error al obtener detalles del lugar:', status)
+          logger.error('Error al obtener detalles del lugar:', status)
         }
       })
     } catch (err) {
-      //console.error('Error en selectPrediction:', err)
+      logger.error('Error en selectPrediction:', err)
     }
   }
 
@@ -233,7 +234,7 @@ export function useGooglePlacesAutocomplete() {
       initServices()
     } catch (err) {
       error.value = 'No se pudo cargar Google Maps API'
-      //console.error('Error al cargar Google Maps script:', err)
+      logger.error('Error al cargar Google Maps script:', err)
     }
   })
 

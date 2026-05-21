@@ -9,7 +9,7 @@
         class="modal-panel relative bg-white w-full sm:rounded-3xl sm:max-w-2xl shadow-2xl overflow-hidden h-full sm:h-auto sm:max-h-[90vh] flex flex-col rounded-t-3xl"
       >
         <!-- Header -->
-        <div class="bg-gradient-to-r from-brand-blue to-brand-bluedark p-8 pb-6 relative overflow-hidden flex-none">
+        <div class="bg-gradient-to-r from-brand-blue to-brand-purple p-8 pb-6 relative overflow-hidden flex-none">
           <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
           <button
             @click="closeModal"
