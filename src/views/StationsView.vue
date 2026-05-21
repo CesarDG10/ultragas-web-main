@@ -43,7 +43,18 @@
 
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
+import { useHead } from '@unhead/vue'
 import AppHeader from '../components/AppHeader.vue'
+
+useHead({
+  title: 'Cobertura Nacional | UltraGas Control Card',
+  meta: [
+    { name: 'description', content: 'Encuentra la estación UltraGas más cercana. Red de más de 2,000 estaciones afiliadas a nivel nacional. Consulta el mapa interactivo de cobertura.' },
+    { property: 'og:title', content: 'Cobertura Nacional | UltraGas Control Card' },
+    { property: 'og:description', content: 'Encuentra la estación UltraGas más cercana. Red de más de 2,000 estaciones afiliadas a nivel nacional.' },
+    { property: 'og:url', content: 'https://www.ultragas.com.mx/cobertura' },
+  ],
+})
 import SolicitarInfoCta from '../components/SolicitarInfoCta.vue'
 import AppFooter from '../components/AppFooter.vue'
 import CoverageStatsSection from '../components/stations/CoverageStatsSection.vue'

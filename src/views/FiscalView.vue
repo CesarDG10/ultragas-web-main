@@ -319,9 +319,20 @@
 </template>
 
 <script setup>
+import { useHead } from '@unhead/vue'
 import AppHeader from '../components/AppHeader.vue'
 import AppFooter from '../components/AppFooter.vue'
 import { useContactModal } from '../composables/useContactModal'
+
+useHead({
+  title: 'Esquema Fiscal | UltraGas Control Card',
+  meta: [
+    { name: 'description', content: 'Conoce el esquema fiscal de UltraGas. Recibe facturas CFDI automáticas por cada carga de combustible, cumple con el SAT y deduce el gasto de combustible de tu flota.' },
+    { property: 'og:title', content: 'Esquema Fiscal | UltraGas Control Card' },
+    { property: 'og:description', content: 'Recibe facturas CFDI automáticas por cada carga de combustible y deduce el gasto de combustible de tu flota con UltraGas.' },
+    { property: 'og:url', content: 'https://www.ultragas.com.mx/fiscal' },
+  ],
+})
 
 const { openModal } = useContactModal()
 </script>

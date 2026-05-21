@@ -211,9 +211,20 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useHead } from '@unhead/vue'
 import AppHeader from '../components/AppHeader.vue'
 import AppFooter from '../components/AppFooter.vue'
 import { useContactModal } from '../composables/useContactModal'
+
+useHead({
+  title: '¿Qué es UltraGas? | Control Card para Flotas',
+  meta: [
+    { name: 'description', content: 'Descubre qué es UltraGas Control Card: la tarjeta inteligente para el control de combustible de tu flota. Tecnología avanzada, seguridad total y red nacional de estaciones.' },
+    { property: 'og:title', content: '¿Qué es UltraGas? | Control Card para Flotas' },
+    { property: 'og:description', content: 'La tarjeta inteligente para el control de combustible de tu flota. Tecnología avanzada, seguridad total y red nacional de estaciones.' },
+    { property: 'og:url', content: 'https://www.ultragas.com.mx/que-es-ultragas' },
+  ],
+})
 
 const { openModal } = useContactModal()
 const videoPlaying = ref(false)
