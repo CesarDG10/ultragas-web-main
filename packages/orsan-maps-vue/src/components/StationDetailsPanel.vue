@@ -60,43 +60,75 @@
           <!-- Premium -->
           <div
             v-if="hasService('premium')"
-            class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex items-center gap-3"
+            class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex flex-col gap-1"
           >
             <div class="absolute -right-3 -top-3 w-14 h-14 bg-white opacity-10 rounded-full"></div>
-            <i class="fa-solid fa-gas-pump text-xl opacity-90 flex-shrink-0"></i>
-            <span class="text-sm font-bold tracking-wider relative z-10">PREMIUM</span>
+            <div class="flex items-center gap-2 relative z-10">
+              <i class="fa-solid fa-gas-pump text-base opacity-90 flex-shrink-0"></i>
+              <span class="text-xs font-bold tracking-wider">PREMIUM</span>
+            </div>
+            <div v-if="getPrice('premium') !== null" class="flex items-baseline relative z-10">
+              <span class="text-sm font-bold">$</span>
+              <span class="text-2xl font-bold tracking-tight leading-none">{{ getPriceInteger('premium') }}</span>
+              <span class="text-sm font-bold">.{{ getPriceDecimals('premium') }}</span>
+              <span class="text-xs opacity-80 ml-1">/L</span>
+            </div>
           </div>
 
           <!-- Magna -->
           <div
             v-if="hasService('magna')"
-            class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex items-center gap-3"
+            class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex flex-col gap-1"
           >
             <div class="absolute -right-3 -top-3 w-14 h-14 bg-white opacity-10 rounded-full"></div>
-            <i class="fa-solid fa-gas-pump text-xl opacity-90 flex-shrink-0"></i>
-            <span class="text-sm font-bold tracking-wider relative z-10">MAGNA</span>
+            <div class="flex items-center gap-2 relative z-10">
+              <i class="fa-solid fa-gas-pump text-base opacity-90 flex-shrink-0"></i>
+              <span class="text-xs font-bold tracking-wider">MAGNA</span>
+            </div>
+            <div v-if="getPrice('magna') !== null" class="flex items-baseline relative z-10">
+              <span class="text-sm font-bold">$</span>
+              <span class="text-2xl font-bold tracking-tight leading-none">{{ getPriceInteger('magna') }}</span>
+              <span class="text-sm font-bold">.{{ getPriceDecimals('magna') }}</span>
+              <span class="text-xs opacity-80 ml-1">/L</span>
+            </div>
           </div>
 
           <!-- Diesel -->
           <div
             v-if="hasService('diesel')"
-            class="bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex items-center gap-3"
+            class="bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex flex-col gap-1"
             :class="!hasService('dieselUba') ? 'col-span-2' : ''"
           >
             <div class="absolute -right-3 -top-3 w-14 h-14 bg-white opacity-5 rounded-full"></div>
-            <i class="fa-solid fa-gas-pump text-xl opacity-90 flex-shrink-0"></i>
-            <span class="text-sm font-bold tracking-wider relative z-10">DIÉSEL</span>
+            <div class="flex items-center gap-2 relative z-10">
+              <i class="fa-solid fa-gas-pump text-base opacity-90 flex-shrink-0"></i>
+              <span class="text-xs font-bold tracking-wider">DIÉSEL</span>
+            </div>
+            <div v-if="getPrice('diesel') !== null" class="flex items-baseline relative z-10">
+              <span class="text-sm font-bold">$</span>
+              <span class="text-2xl font-bold tracking-tight leading-none">{{ getPriceInteger('diesel') }}</span>
+              <span class="text-sm font-bold">.{{ getPriceDecimals('diesel') }}</span>
+              <span class="text-xs opacity-80 ml-1">/L</span>
+            </div>
           </div>
 
           <!-- Diesel UBA -->
           <div
             v-if="hasService('dieselUba')"
-            class="bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex items-center gap-3"
+            class="bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl px-4 py-3 text-white shadow-lg relative overflow-hidden flex flex-col gap-1"
             :class="!hasService('diesel') ? 'col-span-2' : ''"
           >
             <div class="absolute -right-3 -top-3 w-14 h-14 bg-white opacity-5 rounded-full"></div>
-            <i class="fa-solid fa-gas-pump text-xl opacity-90 flex-shrink-0"></i>
-            <span class="text-sm font-bold tracking-wider relative z-10">DIÉSEL UBA</span>
+            <div class="flex items-center gap-2 relative z-10">
+              <i class="fa-solid fa-gas-pump text-base opacity-90 flex-shrink-0"></i>
+              <span class="text-xs font-bold tracking-wider">DIÉSEL UBA</span>
+            </div>
+            <div v-if="getPrice('dieselUba') !== null" class="flex items-baseline relative z-10">
+              <span class="text-sm font-bold">$</span>
+              <span class="text-2xl font-bold tracking-tight leading-none">{{ getPriceInteger('dieselUba') }}</span>
+              <span class="text-sm font-bold">.{{ getPriceDecimals('dieselUba') }}</span>
+              <span class="text-xs opacity-80 ml-1">/L</span>
+            </div>
           </div>
         </div>
       </div>
@@ -300,7 +332,17 @@ const availableServices = computed(() => {
   const stationServices = props.station.services || []
   const amenities = props.station.amenities || {}
 
-  // Por array de servicios (slug o name): API nueva usa slug "magna", "premium", "diesel"
+  // Mapa de precios raw (soporta camelCase y PascalCase de DB)
+  const priceRaw = {
+    premium:  props.station.precioPremium  ?? props.station.PrecioPremium  ?? props.station.price_premium  ?? null,
+    magna:    props.station.precioMagna    ?? props.station.PrecioMagna    ?? props.station.price_regular   ?? null,
+    diesel:   props.station.precioDiesel   ?? props.station.PrecioDiesel   ?? props.station.price_diesel    ?? null,
+    dieselUba: props.station.price_diesel_uba ?? null,
+  }
+
+  const hayDatosDePrecio = Object.values(priceRaw).some(v => v != null)
+
+  // Por array de servicios (slug o name)
   if (Array.isArray(stationServices) && stationServices.length > 0) {
     stationServices.forEach(service => {
       const slug = (typeof service === 'string' ? service : (service.slug || '')).toLowerCase()
@@ -312,15 +354,25 @@ const availableServices = computed(() => {
     })
   }
 
-  // Por precios (nuevos: precioMagna, precioPremium, precioDiesel; antiguos: price_*)
-  if (props.station.precioPremium ?? props.station.price_premium) services.push('premium')
-  if (props.station.precioMagna ?? props.station.price_regular) services.push('magna')
-  if (props.station.precioDiesel ?? props.station.price_diesel) services.push('diesel')
-  if (props.station.price_diesel_uba) services.push('dieselUba')
+  // Por precios directos (precio > 0 = vende, precio = 0 = no vende)
+  if (priceRaw.premium  != null && parseFloat(priceRaw.premium)  > 0) services.push('premium')
+  if (priceRaw.magna    != null && parseFloat(priceRaw.magna)    > 0) services.push('magna')
+  if (priceRaw.diesel   != null && parseFloat(priceRaw.diesel)   > 0) services.push('diesel')
+  if (priceRaw.dieselUba != null && parseFloat(priceRaw.dieselUba) > 0) services.push('dieselUba')
   if (amenities.hasDieselUba) services.push('dieselUba')
 
-  if (services.length === 0) return ['premium', 'magna', 'diesel', 'dieselUba']
-  return [...new Set(services)]
+  // Filtro final: si hay dato de precio para un combustible y es 0, no mostrarlo
+  const unique = [...new Set(services)].filter(svc => {
+    const raw = priceRaw[svc]
+    if (raw != null) return parseFloat(raw) > 0
+    return true
+  })
+
+  // Fallback solo cuando no llega ningún dato de precio ni servicios
+  if (unique.length === 0 && !hayDatosDePrecio && stationServices.length === 0) {
+    return ['premium', 'magna', 'diesel']
+  }
+  return unique
 })
 
 // Verificar si un servicio específico está disponible
@@ -328,39 +380,40 @@ const hasService = (serviceType) => {
   return availableServices.value.includes(serviceType)
 }
 
-// Obtener precio (precioMagna/precioPremium/precioDiesel o price_*)
+// Obtener precio (soporta camelCase y PascalCase de DB, retorna null si no hay dato real)
 const getPrice = (serviceType) => {
   const s = props.station
   if (serviceType === 'premium') {
-    const v = s.precioPremium ?? s.price_premium
-    if (v != null) return parseFloat(v)
+    const v = s.precioPremium ?? s.PrecioPremium ?? s.price_premium
+    if (v != null) { const n = parseFloat(v); return n > 0 ? n : null }
   }
   if (serviceType === 'magna') {
-    const v = s.precioMagna ?? s.price_regular
-    if (v != null) return parseFloat(v)
+    const v = s.precioMagna ?? s.PrecioMagna ?? s.price_regular
+    if (v != null) { const n = parseFloat(v); return n > 0 ? n : null }
   }
   if (serviceType === 'diesel') {
-    const v = s.precioDiesel ?? s.price_diesel
-    if (v != null) return parseFloat(v)
+    const v = s.precioDiesel ?? s.PrecioDiesel ?? s.price_diesel
+    if (v != null) { const n = parseFloat(v); return n > 0 ? n : null }
   }
   if (serviceType === 'dieselUba' && s.price_diesel_uba != null) {
-    return parseFloat(s.price_diesel_uba)
+    const n = parseFloat(s.price_diesel_uba)
+    return n > 0 ? n : null
   }
-  const simulatedPrices = { premium: 24.50, magna: 22.80, diesel: 23.90, dieselUba: 25.20 }
-  return simulatedPrices[serviceType] || 0
+  return null
 }
 
 // Obtener parte entera del precio
 const getPriceInteger = (serviceType) => {
   const price = getPrice(serviceType)
+  if (price === null) return '0'
   return Math.floor(price).toString()
 }
 
 // Obtener parte decimal del precio
 const getPriceDecimals = (serviceType) => {
   const price = getPrice(serviceType)
-  const decimals = (price % 1).toFixed(2).substring(2)
-  return decimals
+  if (price === null) return '00'
+  return (price % 1).toFixed(2).substring(2)
 }
 
 // Servicios adicionales que no son combustibles (por name o slug)
