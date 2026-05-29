@@ -7,10 +7,12 @@
       <ProblemSection />
       <SolicitarInfoCta />
       <TechSection />
+      <PartnersSection />
       <CoverageSection />
       <FeaturesGridSection />
       <SolicitarInfoCta />
       <ComparisonSection />
+      <SuccessStoriesSection />
       <FaqSection />
     </main>
     <AppFooter />
@@ -36,8 +38,10 @@ import SolicitarInfoCta from '../components/SolicitarInfoCta.vue'
 import HeroSection from '../components/home/HeroSection.vue'
 import ProblemSection from '../components/home/ProblemSection.vue'
 import TechSection from '../components/home/TechSection.vue'
+import PartnersSection from '../components/home/PartnersSection.vue'
 import CoverageSection from '../components/home/CoverageSection.vue'
 import FeaturesGridSection from '../components/home/FeaturesGridSection.vue'
 import ComparisonSection from '../components/home/ComparisonSection.vue'
+import SuccessStoriesSection from '../components/home/SuccessStoriesSection.vue'
 import FaqSection from '../components/home/FaqSection.vue'
 </script>
