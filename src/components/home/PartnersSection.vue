@@ -22,17 +22,17 @@
 
 <script setup>
 const logos = [
-  { src: '/public/logos/2024-04-flensa-logo.png', alt: 'Flensa' },
-  { src: '/public/logos/JHONSON CONTROLS.png', alt: 'Jhonson Controls' },
-  { src: '/public/logos/La_Costeña_logo.png', alt: 'La Costeña' },
-  { src: '/public/logos/Sigma_Alimentos_logotipo.png', alt: 'Sigma Alimentos' },
-  { src: '/public/logos/TS Trucking logo.jpg', alt: 'TS Trucking' },
-  { src: '/public/logos/Tum Logistica.jpg', alt: 'Tum Logistica' },
-  { src: '/public/logos/liverpool-logo.png', alt: 'Liverpool' },
-  { src: '/public/logos/logo-embotelladora-aga 1.png', alt: 'Aga embotelladora' },
-  { src: '/public/logos/pilgrims.png', alt: 'Pilgrims' },
-  { src: '/public/logos/soriana-seeklogo.png', alt: 'Soriana' },
-  { src: '/public/logos/zemog-logo.png', alt: 'Zemog' },
+  { src: '/images/2024-04-flensa-logo.png', alt: 'Flensa' },
+  { src: '/images/JHONSON CONTROLS.png', alt: 'Jhonson Controls' },
+  { src: '/images/La_Costeña_logo.png', alt: 'La Costeña' },
+  { src: '/images/Sigma_Alimentos_logotipo.png', alt: 'Sigma Alimentos' },
+  { src: '/images/TS Trucking logo.jpg', alt: 'TS Trucking' },
+  { src: '/images/Tum Logistica.jpg', alt: 'Tum Logistica' },
+  { src: '/images/liverpool-logo.png', alt: 'Liverpool' },
+  { src: '/images/logo-embotelladora-aga 1.png', alt: 'Aga embotelladora' },
+  { src: '/images/pilgrims.png', alt: 'Pilgrims' },
+  { src: '/images/soriana-seeklogo.png', alt: 'Soriana' },
+  { src: '/images/zemog-logo.png', alt: 'Zemog' },
 ]
 </script>
 <style scoped>
