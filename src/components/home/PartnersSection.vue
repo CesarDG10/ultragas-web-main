@@ -29,7 +29,7 @@ const logos = [
   { src: '/public/logos/TS Trucking logo.jpg', alt: 'TS Trucking' },
   { src: '/public/logos/Tum Logistica.jpg', alt: 'Tum Logistica' },
   { src: '/public/logos/liverpool-logo.png', alt: 'Liverpool' },
-  { src: '/public/logos/logo-embotelladora-aga.webp', alt: 'Aga embotelladora' },
+  { src: '/public/logos/logo-embotelladora-aga 1.png', alt: 'Aga embotelladora' },
   { src: '/public/logos/pilgrims.png', alt: 'Pilgrims' },
   { src: '/public/logos/soriana-seeklogo.png', alt: 'Soriana' },
   { src: '/public/logos/zemog-logo.png', alt: 'Zemog' },
