@@ -66,6 +66,16 @@
         </div>
       </div>
 
+      <!-- CTA -->
+      <div class="text-center mt-12 sm:mt-16">
+        <button
+          @click="openModal('Solicitar Información')"
+          class="bg-gradient-to-r from-brand-blue to-brand-purple text-white text-sm sm:text-base font-bold px-8 py-3.5 sm:px-10 sm:py-4 rounded-full hover:shadow-xl hover:shadow-purple-500/20 hover:-translate-y-1 transition-all duration-300"
+        >
+          Quiero eliminar las fugas de combustible
+        </button>
+      </div>
+  
       <!-- Navigation Buttons (Mobile only) -->
       <div class="flex justify-center gap-3 mt-4 md:hidden">
         <button @click="scroll('left')" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:text-brand-blue hover:border-brand-blue/30 transition-all shadow-sm" aria-label="Anterior">
@@ -82,7 +92,10 @@
 </template>
 
 <script setup>
+import { useContactModal } from '../../composables/useContactModal'
 import { useCarousel } from '../../composables/useCarousel'
+
+const { openModal } = useContactModal()
 
 const { scrollContainer, scroll } = useCarousel({ interval: 5000 })
 </script>

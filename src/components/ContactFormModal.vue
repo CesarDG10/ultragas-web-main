@@ -1,4 +1,5 @@
 <template>
+  
   <Transition name="modal">
     <div
       v-if="isOpen"
@@ -23,18 +24,63 @@
               Un asesor te contactará pronto
             </div>
             <h2 class="text-2xl font-black text-white">{{ modalTitle }}</h2>
-            <p class="text-white/80 text-sm mt-1">Completa el formulario y te contactaremos a la brevedad.</p>
+            <p class="text-white/80 text-sm mt-1">Cuéntanos sobre tu flota y un especialista en gestión de combustible te contactará en menos de 24 horas para mostrarte cómo podemos ayudarte.</p>
           </div>
         </div>
-
+        
         <!-- Pipedrive Web Form -->
         <div class="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0">
           <div ref="pipedriveHost" class="pipedrive-host w-full min-h-[480px]"></div>
+        
+          <div class="mt-5 flex flex-col items-center justify-center gap-2 text-center text-[11px] sm:text-xs text-slate-500"></div>
+                      
+              <p class="flex items-center justify-center gap-2 text-[11px] sm:text-xs text-slate-600 font-medium w-full">
+                <span class="flex-shrink-0">🔒</span>
+                <span>Sin spam. Solo te contactaremos una vez para agendar tu asesoría.</span>
+              </p>
+
+              
+              <p class="flex items-center justify-center gap-2 text-[11px] sm:text-xs text-slate-400 w-full">
+                <span class="flex-shrink-0 text-xs">⏱</span>
+                <span>Tiempo de respuesta promedio: menos de 2 horas en días hábiles</span>
+              </p>
+
+              <hr class="w-200 border-slate-200 my-1 mt-4 mb-3" />
+
+              <!-- SELLOS DE SEGURIDAD Y CERTIFICACIÓN  -->
+              <div class="flex flex-wrap items-center justify-center gap-2.5 w-full mt-1">
+                
+                
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-50 border border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 text-emerald-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                  </svg>
+                  Datos Protegidos
+                </span>
+
+                
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-50 border border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  <span class="text-xs inline-flex items-center">🇲🇽</span>
+                  Empresa Mexicana
+                </span>
+
+                
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-50 border border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 text-blue-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 9h3.75M11.25 12h-.008v.008h.008V12Zm.375 0h.008v.008h-.008V12Zm-.375 3h-.008v.008h.008V15Zm.375 0h.008v.008h-.008V15Zm-.375-6h-.008v.008h.008V9Zm.375 0h.008v.008h-.008V9ZM3 20.25h18M3.75 6h16.5M21 20.25V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v14.25" />
+                  </svg>
+                  SAT Validado
+                </span>
+
+              </div>
         </div>
       </div>
     </div>
+    
   </Transition>
+  
 </template>
+
 
 <script setup>
 import { ref, watch, nextTick } from 'vue'
@@ -65,6 +111,7 @@ function mountPipedriveEmbed() {
   wrap.appendChild(script)
   host.appendChild(wrap)
 }
+
 
 watch(isOpen, async (open) => {
   if (!open) return

@@ -16,8 +16,7 @@
         <div>
           <h4 class="text-brand-dark font-bold mb-4">Producto</h4>
           <ul class="space-y-2 text-sm">
-            <li><a href="#" class="hover:text-brand-purple transition-colors">Características</a></li>
-            <li><a href="#" class="hover:text-brand-purple transition-colors">Precios</a></li>
+            <li><a href="#features-2" class="hover:text-brand-purple transition-colors">Características</a></li>
             <li>
               <RouterLink to="/cobertura" class="hover:text-brand-purple transition-colors">Cobertura</RouterLink>
             </li>
@@ -27,9 +26,12 @@
         <div>
           <h4 class="text-brand-dark font-bold mb-4">Empresa</h4>
           <ul class="space-y-2 text-sm">
-            <li><a href="#" class="hover:text-brand-purple transition-colors">Nosotros</a></li>
-            <li><a href="#" class="hover:text-brand-purple transition-colors">Blog</a></li>
-            <li><a href="#" class="hover:text-brand-purple transition-colors">Contacto</a></li>
+            <!-- AL HACER CLIC EJECUTAMOS LA FUNCIÓN DE NUESTRO COMPOSABLE -->
+            <li>
+              <a href="#" @click.prevent="openFormWithTitle" class="hover:text-brand-purple transition-colors">
+                Contacto
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -43,19 +45,36 @@
       </div>
 
       <div class="border-t border-gray-200 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p class="text-sm text-gray-500">© 2024 UltraGas Control Card. Todos los derechos reservados.</p>
         <div class="flex gap-4">
-          <a href="#" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-colors text-gray-600">
+          <a href="https://www.facebook.com/UltraGasFleetCard" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-colors text-gray-600">
             <i class="fa-brands fa-facebook-f"></i>
           </a>
-          <a href="#" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-colors text-gray-600">
+          <a href="https://www.linkedin.com/company/ultragas/" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-colors text-gray-600">
             <i class="fa-brands fa-linkedin-in"></i>
           </a>
-          <a href="#" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-colors text-gray-600">
+          <a href="https://www.instagram.com/ultragas_controlcard/" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-colors text-gray-600">
             <i class="fa-brands fa-instagram"></i>
           </a>
+           <a href="https://www.tiktok.com/@ultragas_controlcard" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-colors text-gray-600">
+            <i class="fa-brands fa-tiktok"></i>
+          </a>
         </div>
+        <p class="text-sm text-gray-500">© 2024 UltraGas Control Card. Todos los derechos reservados.</p>
       </div>
     </div>
   </footer>
 </template>
+
+<script setup>
+import { useContactModal } from '../composables/useContactModal'
+
+// Extraemos los controles del estado global compartidos con el modal
+const { isOpen, modalTitle } = useContactModal()
+
+const openFormWithTitle = () => {
+  // Cambiamos el título que mostrará el encabezado del modal de Pipedrive
+  modalTitle.value = 'Contactar con un Ejecutivo'
+  // Cambiamos el estado global a true para que se renderice el modal
+  isOpen.value = true
+}
+</script>

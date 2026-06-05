@@ -2,7 +2,7 @@
   <div class="bg-white py-14 border-b border-gray-100 overflow-hidden w-full select-none">
     <div class="max-w-7xl mx-auto px-4">
       <p class="text-center text-base font-bold text-gray-400 uppercase tracking-widest mb-12">
-        Empresas que confían en nuestro suministro
+        Empresas que confían en nosotros
       </p>
       
       <div class="marquee-wrapper relative w-full overflow-hidden flex whitespace-nowrap group">
