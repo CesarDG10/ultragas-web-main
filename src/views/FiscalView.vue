@@ -73,9 +73,9 @@
 
           <!-- Diagram image -->
           <div class="flex justify-center mb-16">
-            <div class="relative bg-gradient-to-br from-slate-50 to-slate-100 rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xl max-w-2xl w-full">
+            <div class="relative bg-gradient-to-br from-slate-50 to-slate-100 rounded-3xl px-4 py-2 border border-slate-200 shadow-xl max-w-lg w-full">
               <img
-                src="https://www.ultragas.com.mx/wp-content/uploads/2020/09/Diagrama-Fiscal4-01-600x540.png"
+                :src="`${base}images/Diagrama-Fiscal4-01-600x540.png`"
                 alt="Diagrama del esquema fiscal Ultra Gas – relación entre Cliente, Ultra Gas y Estación de Servicio"
                 class="w-full h-auto rounded-xl"
                 loading="lazy"
@@ -224,11 +224,11 @@
             <div class="flex justify-center lg:justify-end">
               <div class="relative">
                 <div class="absolute inset-0 bg-gradient-to-br from-brand-blue/20 to-brand-purple/20 rounded-3xl blur-2xl scale-110"></div>
-                <div class="relative bg-white rounded-3xl shadow-2xl p-4 border border-slate-200">
+                <div class="relative bg-white rounded-3xl shadow-2xl p-2 border border-slate-200">
                   <img
-                    src="https://www.ultragas.com.mx/wp-content/uploads/2020/09/Factura-UG2-01.png"
+                    :src="`${base}images/Factura-UG2-01.png`"
                     alt="Ejemplo de factura CFDI Ultra Gas con complemento de estado de cuenta de combustibles"
-                    class="w-full max-w-md h-auto rounded-xl"
+                    class="w-full max-w-lg h-auto rounded-xl"
                     loading="lazy"
                   />
                 </div>
@@ -323,6 +323,7 @@ import { useHead } from '@unhead/vue'
 import AppHeader from '../components/AppHeader.vue'
 import AppFooter from '../components/AppFooter.vue'
 import { useContactModal } from '../composables/useContactModal'
+const base = import.meta.env.BASE_URL
 
 useHead({
   title: 'Esquema Fiscal | UltraGas Control Card',

@@ -34,7 +34,6 @@ useHead({
 })
 import AppHeader from '../components/AppHeader.vue'
 import AppFooter from '../components/AppFooter.vue'
-import SolicitarInfoCta from '../components/SolicitarInfoCta.vue'
 import HeroSection from '../components/home/HeroSection.vue'
 import ProblemSection from '../components/home/ProblemSection.vue'
 import TechSection from '../components/home/TechSection.vue'

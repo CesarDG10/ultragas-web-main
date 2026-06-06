@@ -80,7 +80,7 @@
                 @click="openModal('FAQ - Solicitar información')"
                 class="w-full bg-gradient-to-r from-brand-blue to-brand-purple text-white font-bold py-3.5 rounded-xl hover:shadow-lg hover:shadow-brand-purple/30 hover:-translate-y-0.5 transition-all duration-300 text-sm mb-3"
               >
-                Solicitar información
+                Hablar con un especialista
               </button>
               <RouterLink
                 to="/cobertura"

@@ -199,7 +199,7 @@
           @click="openModal('Solicitar Información')"
           class="bg-gradient-to-r from-brand-blue to-brand-purple text-white text-sm sm:text-base font-bold px-8 py-3.5 sm:px-10 sm:py-4 rounded-full hover:shadow-xl hover:shadow-purple-500/20 hover:-translate-y-1 transition-all duration-300"
         >
-          Solicitar Información
+          Ver demo del ecosistema
         </button>
       </div>
     </div>

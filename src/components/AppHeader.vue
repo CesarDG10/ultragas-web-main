@@ -40,7 +40,7 @@
           class="text-sm font-medium text-gray-600 hover:text-brand-purple transition-colors"
           :class="{ 'text-brand-purple': $route.name === 'que-es-ultragas' }"
         >¿Qué es UltraGas?</RouterLink>
-        <a href="#" class="text-sm font-medium text-gray-600 hover:text-brand-purple transition-colors">Soporte</a>
+        
       </nav>
 
       <!-- Desktop CTAs -->
@@ -52,10 +52,10 @@
           @open-portal-modal="openPortalModal"
         />
         <button
-          @click="openModal('Contratar Ahora')"
+          @click="openModal('Hablar con un especialista')"
           class="bg-gradient-to-r from-brand-blue to-brand-purple text-white text-sm font-semibold px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-brand-purple/30 transition-all"
         >
-          Contratar Ahora
+          Hablar con un especialista
         </button>
       </div>
 
@@ -147,13 +147,7 @@
             <i class="fa-solid fa-circle-play text-sm w-4 text-center text-gray-400"></i>
             ¿Qué es UltraGas?
           </RouterLink>
-          <a
-            href="#"
-            class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-base font-medium text-gray-700 hover:text-brand-purple hover:bg-purple-50/60 transition-colors"
-          >
-            <i class="fa-solid fa-headset text-sm w-4 text-center text-gray-400"></i>
-            Soporte
-          </a>
+          
         </nav>
 
         <!-- Accesos + CTA -->
@@ -182,10 +176,10 @@
             <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-300 ml-auto"></i>
           </a>
           <button
-            @click="openModal('Contratar Ahora'); mobileOpen = false"
+            @click="openModal('Hablar con un especialista'); mobileOpen = false"
             class="w-full bg-gradient-to-r from-brand-blue to-brand-purple text-white font-bold py-3.5 px-4 rounded-xl text-sm hover:shadow-lg hover:shadow-purple-500/20 transition-all mt-1"
           >
-            Contratar Ahora
+            Hablar con un especialista
           </button>
         </div>
       </div>
