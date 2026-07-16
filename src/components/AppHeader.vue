@@ -153,17 +153,15 @@
         <!-- Accesos + CTA -->
         <div class="px-4 py-5 border-t border-gray-100 flex flex-col gap-3 flex-shrink-0">
           <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400 px-1">Accesos</p>
-          <a
-            href="https://ultragas.com.mx/Consultas2/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-brand-purple/40 hover:text-brand-purple transition-colors"
-            @click="mobileOpen = false"
+          <button
+            type="button"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-brand-purple/40 hover:text-brand-purple transition-colors w-full text-left"
+            @click="openPortalModal(); mobileOpen = false"
           >
             <i class="fa-solid fa-user-tie text-gray-400 w-4 text-center"></i>
             Acceso a clientes
-            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-300 ml-auto"></i>
-          </a>
+            <i class="fa-solid fa-chevron-right text-[10px] text-gray-300 ml-auto"></i>
+          </button>
           <a
             href="https://ultragas.com.mx/Afiliadas/"
             target="_blank"
