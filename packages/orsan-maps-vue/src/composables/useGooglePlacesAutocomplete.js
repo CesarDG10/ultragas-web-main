@@ -3,6 +3,25 @@ import { GOOGLE_MAPS_API_KEY } from '../config/google.js'
 
 let googleMapsLoadPromise = null
 
+// Con loading=async, la librería "places" puede terminar de llegar un
+// instante después del evento load del script principal. Se espera a que
+// realmente exista antes de resolver, en vez de asumirlo.
+function waitForPlacesReady(resolve, reject) {
+  const start = Date.now()
+  const check = () => {
+    if (window.google?.maps?.places?.AutocompleteService) {
+      resolve()
+      return
+    }
+    if (Date.now() - start > 10000) {
+      reject(new Error('Google Maps Places no terminó de cargar'))
+      return
+    }
+    setTimeout(check, 50)
+  }
+  check()
+}
+
 function loadGoogleMapsScript() {
   if (window.google?.maps?.places) return Promise.resolve()
 
@@ -11,15 +30,18 @@ function loadGoogleMapsScript() {
   googleMapsLoadPromise = new Promise((resolve, reject) => {
     const existing = document.querySelector('script[src*="maps.googleapis.com"]')
     if (existing) {
-      existing.addEventListener('load', resolve)
+      existing.addEventListener('load', () => waitForPlacesReady(resolve, reject))
       existing.addEventListener('error', reject)
       return
     }
+    const callbackName = '__orsanGoogleMapsReady'
+    window[callbackName] = () => {
+      delete window[callbackName]
+      waitForPlacesReady(resolve, reject)
+    }
     const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&language=es`
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&language=es&loading=async&callback=${callbackName}`
     script.async = true
-    script.defer = true
-    script.onload = resolve
     script.onerror = () => reject(new Error('No se pudo cargar el script de Google Maps'))
     document.head.appendChild(script)
   })
@@ -77,8 +99,11 @@ export function useGooglePlacesAutocomplete() {
 
   /**
    * Buscar predicciones basadas en el input del usuario
+   * @param {string} input
+   * @param {string[]} types - Tipo de resultados: ['(regions)'] para ciudades/estados,
+   *   ['geocode'] para incluir también direcciones exactas (calle y número)
    */
-  const searchPlaces = async (input) => {
+  const searchPlaces = async (input, types = ['(regions)']) => {
     if (!input || input.trim().length < 3) {
       predictions.value = []
       return
@@ -94,7 +119,7 @@ export function useGooglePlacesAutocomplete() {
     try {
       const request = {
         input: input.trim(),
-        types: ['(regions)'], // Regiones incluye ciudades y estados
+        types,
         componentRestrictions: { country: 'mx' }, // Restringir a México
         language: 'es'
       }

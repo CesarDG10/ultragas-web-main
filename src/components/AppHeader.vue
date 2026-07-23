@@ -46,10 +46,8 @@
       <!-- Desktop CTAs -->
       <div class="hidden md:flex items-center gap-4">
         <AccessDropdown
-          afiliados-url="https://ultragas.com.mx/Afiliadas/"
-          clientesviejo-url="https://ultragas.com.mx/Consultas2/"
-          clientesnuevo-url="https://ultragas.com.mx/Clientes"
           @open-portal-modal="openPortalModal"
+          @open-affiliates-modal="openAffiliatesModal"
         />
         <button
           @click="openModal('Hablar con un especialista')"
@@ -75,6 +73,12 @@
   <PortalModal
     clientesviejo-url="https://ultragas.com.mx/Consultas2/"
     clientesnuevo-url="https://ultragas.com.mx/Clientes"
+  />
+
+  <!-- Affiliates Modal -->
+  <AffiliatesModal
+    afiliadosclasico-url="https://ultragas.com.mx/Afiliadas/"
+    sistemaafiliadas-url="https://ultragas.com.mx/SistemaAfiliadas"
   />
 
   <!-- Mobile Drawer Overlay -->
@@ -162,17 +166,15 @@
             Acceso a clientes
             <i class="fa-solid fa-chevron-right text-[10px] text-gray-300 ml-auto"></i>
           </button>
-          <a
-            href="https://ultragas.com.mx/Afiliadas/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-brand-purple/40 hover:text-brand-purple transition-colors"
-            @click="mobileOpen = false"
+          <button
+            type="button"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-brand-purple/40 hover:text-brand-purple transition-colors w-full text-left"
+            @click="openAffiliatesModal(); mobileOpen = false"
           >
             <i class="fa-solid fa-store text-gray-400 w-4 text-center"></i>
             Acceso a afiliados
-            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-300 ml-auto"></i>
-          </a>
+            <i class="fa-solid fa-chevron-right text-[10px] text-gray-300 ml-auto"></i>
+          </button>
           <button
             @click="openModal('Hablar con un especialista'); mobileOpen = false"
             class="w-full bg-gradient-to-r from-brand-blue to-brand-purple text-white font-bold py-3.5 px-4 rounded-xl text-sm hover:shadow-lg hover:shadow-purple-500/20 transition-all mt-1"
@@ -190,12 +192,15 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useContactModal } from '../composables/useContactModal'
 import { useVideoModal } from '../composables/useVideoModal'
 import { usePortalModal } from '../composables/usePortalModal'
+import { useAffiliatesModal } from '../composables/useAffiliatesModal'
 import AccessDropdown from './AccessDropdown.vue'
 import PortalModal from './PortalModal.vue'
+import AffiliatesModal from './AffiliatesModal.vue'
 
 const { openModal } = useContactModal()
 const { openVideo } = useVideoModal()
 const { openPortalModal } = usePortalModal()
+const { openAffiliatesModal } = useAffiliatesModal()
 
 const scrolled = ref(false)
 const mobileOpen = ref(false)
