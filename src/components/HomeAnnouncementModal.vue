@@ -91,14 +91,26 @@ import { ref, onMounted } from 'vue'
 
 const isVisible = ref(false)
 
+// Clave única para guardar en el almacenamiento local del navegador
+const STORAGE_KEY = 'ultragas_modal_announcement_seen'
+
 onMounted(() => {
-  isVisible.value = true
-  document.body.style.overflow = 'hidden'
+  // 1. Verificamos si el usuario ya vio el modal previamente
+  const hasSeenModal = localStorage.getItem(STORAGE_KEY)
+
+  // 2. Si NO lo ha visto, mostramos el modal y bloqueamos el scroll
+  if (!hasSeenModal) {
+    isVisible.value = true
+    document.body.style.overflow = 'hidden'
+  }
 })
 
 function dismiss() {
   isVisible.value = false
   document.body.style.overflow = 'auto'
+  
+  // 3. Guardamos la marca en localStorage para que no se vuelva a mostrar
+  localStorage.setItem(STORAGE_KEY, 'true')
 }
 </script>
 
