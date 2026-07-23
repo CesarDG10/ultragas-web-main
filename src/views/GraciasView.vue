@@ -12,7 +12,7 @@
 
       <h1 class="title">¡Solicitud Recibida!</h1>
       <p class="subtitle">
-        Hemos recibido los datos de tu empresa correctamente. En breve, un ejecutivo se pondrá en contacto contigo para brindarte toda la información.
+        Hemos recibido tus datos correctamente. En breve, uno de nuestros asesores se pondrá en contacto contigo para darte el seguimiento que mereces.
       </p>
 
       

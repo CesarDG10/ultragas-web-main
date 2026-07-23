@@ -34,15 +34,7 @@
           >
             Comenzar Ahora
           </button>
-          <button
-            @click="openVideo()"
-            class="bg-white text-brand-dark border border-gray-200 text-sm sm:text-base font-semibold px-6 py-3.5 sm:px-8 sm:py-4 rounded-full hover:bg-gray-50 transition-all hover:border-brand-purple/30 flex items-center justify-center gap-2 group shadow-sm w-full sm:w-auto"
-          >
-            <div class="w-7 h-7 sm:w-8 sm:h-8 bg-purple-50 rounded-full flex items-center justify-center group-hover:bg-purple-100 transition-colors">
-              <i class="fa-solid fa-play text-brand-purple text-xs"></i>
-            </div>
-            Ver Video
-          </button>
+          
         </div>
 
         <div class="pt-4 sm:pt-6 border-t border-gray-200 mt-4 sm:mt-6">

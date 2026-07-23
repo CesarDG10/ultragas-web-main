@@ -4,6 +4,7 @@
     <AppHeader />
     <main>
       <HeroSection />
+      <VideoModal />
       <ProblemSection />
       <SolicitarInfoCta />
       <TechSection />
@@ -43,4 +44,5 @@ import FeaturesGridSection from '../components/home/FeaturesGridSection.vue'
 import ComparisonSection from '../components/home/ComparisonSection.vue'
 import SuccessStoriesSection from '../components/home/SuccessStoriesSection.vue'
 import FaqSection from '../components/home/FaqSection.vue'
+import VideoModal from '../components/VideoModal.vue'
 </script>
