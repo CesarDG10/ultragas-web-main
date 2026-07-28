@@ -25,15 +25,14 @@
           <i class="fa-solid fa-user-tie text-gray-400 text-xs w-4 text-center"></i>
           Portal de Clientes
         </button>
-        <a
-          :href="afiliadosUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-purple transition-colors last:rounded-b-xl"
+        <button
+          type="button"
+          @click="emit('open-affiliates-modal'); open = false"
+          class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-purple transition-colors last:rounded-b-xl text-left"
         >
           <i class="fa-solid fa-store text-gray-400 text-xs w-4 text-center"></i>
           Portal de Afiliados
-        </a>
+        </button>
       </div>
     </Transition>
   </div>
@@ -42,13 +41,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const emit = defineEmits(['open-portal-modal'])
-
-defineProps({
-  clientesviejoUrl: { type: String, default: '#' },
-  clientesnuevoUrl: { type: String, default: '#' },
-  afiliadosUrl: { type: String, default: '#' },
-})
+const emit = defineEmits(['open-portal-modal', 'open-affiliates-modal'])
 
 const open = ref(false)
 const dropdownRef = ref(null)

@@ -14,14 +14,23 @@
               Encuentra la estación más cercana en nuestra red de más de 2,000 puntos a nivel nacional
             </p>
           </div>
-          <div class="hidden lg:flex items-center gap-4 flex-shrink-0">
-            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-4 flex items-center gap-3">
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center">
-                <i class="fa-solid fa-map-location-dot text-white text-xl"></i>
-              </div>
-              <div>
-                <p class="text-xs text-gray-400 font-semibold">Estaciones Activas</p>
-                <p class="text-2xl font-bold text-white">2,000+</p>
+          <div class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+            <button
+              @click="showRouteModal = true"
+              class="flex items-center gap-2 bg-gradient-to-r from-brand-blue to-brand-purple text-white font-semibold text-sm sm:text-base px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl shadow-lg hover:shadow-brand-purple/30 hover:-translate-y-0.5 transition-all"
+            >
+              <i class="fa-solid fa-route"></i>
+              <span>Traza tu ruta</span>
+            </button>
+            <div class="hidden lg:flex items-center gap-4 flex-shrink-0">
+              <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-4 flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center">
+                  <i class="fa-solid fa-map-location-dot text-white text-xl"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-400 font-semibold">Estaciones Activas</p>
+                  <p class="text-2xl font-bold text-white">2,000+</p>
+                </div>
               </div>
             </div>
           </div>
@@ -38,13 +47,18 @@
     <SolicitarInfoCta />
     <CoverageCtaSection />
     <AppFooter />
+
+    <RouteModal v-if="showRouteModal" @close="showRouteModal = false" />
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useHead } from '@unhead/vue'
 import AppHeader from '../components/AppHeader.vue'
+import RouteModal from '../components/stations/RouteModal.vue'
+
+const showRouteModal = ref(false)
 
 useHead({
   title: 'Cobertura Nacional | UltraGas Control Card',

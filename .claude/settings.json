@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f \"C:\\\\Users\\\\A.zamarron\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\test-\"*.mjs)",
+      "Bash(timeout 60 node \"C:\\\\Users\\\\A.zamarron\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\test-fixes.mjs\")",
+      "Bash(timeout 60 node \"C:\\\\Users\\\\A.zamarron\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\test-drag-retrace.mjs\")",
+      "Bash(identify public/icons/ug-marker.png)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\A.zamarron\\AppData\\Local\\npm-cache\\_npx\\e41f203b7505f1fb"
+    ]
+  }
+}
