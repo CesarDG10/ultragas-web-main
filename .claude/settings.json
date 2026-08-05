@@ -4,7 +4,16 @@
       "Bash(rm -f \"C:\\\\Users\\\\A.zamarron\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\test-\"*.mjs)",
       "Bash(timeout 60 node \"C:\\\\Users\\\\A.zamarron\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\test-fixes.mjs\")",
       "Bash(timeout 60 node \"C:\\\\Users\\\\A.zamarron\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\test-drag-retrace.mjs\")",
-      "Bash(identify public/icons/ug-marker.png)"
+      "Bash(identify public/icons/ug-marker.png)",
+      "WebSearch",
+      "WebFetch(domain:developers.google.com)",
+      "WebFetch(domain:www.mapbox.com)",
+      "Bash(timeout 60 node \"C:\\\\Users\\\\A.zamarron\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\shot-flyer.mjs\")",
+      "Skill(artifact-design)",
+      "Skill(artifact-design:*)",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0 Safari/537.36\" \"https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap\")",
+      "Bash(curl -s -o bebas.woff2 \"https://fonts.gstatic.com/s/bebasneue/v16/JTUSjIg69CK48gW7PXoo9Wlhyw.woff2\")",
+      "Bash(base64 -w 0 bebas.woff2)"
     ],
     "additionalDirectories": [
       "C:\\Users\\A.zamarron\\AppData\\Local\\npm-cache\\_npx\\e41f203b7505f1fb"

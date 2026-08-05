@@ -16,11 +16,10 @@
         <div class="flex flex-col lg:flex-row flex-1 min-h-0">
           <!-- Panel de formulario / resultados -->
           <div
-            ref="formPanelEl"
-            @scroll="updateScrollHint"
-            class="relative w-full lg:w-[380px] flex-shrink-0 bg-slate-50 border-b-2 border-gray-200 lg:border-b-0 lg:border-r lg:border-gray-200 shadow-[0_8px_10px_-8px_rgba(0,0,0,0.2)] lg:shadow-none overflow-y-auto max-h-[40vh] lg:max-h-none lg:h-full"
+            class="relative w-full lg:w-[380px] lg:flex-none bg-slate-50 lg:border-r lg:border-gray-200 overflow-y-auto lg:max-h-none lg:h-full lg:block"
+            :class="showMobileMap ? 'hidden' : 'flex-1 block'"
           >
-            <div ref="formContentEl" class="p-5">
+            <div class="p-5">
             <div
               v-for="(point, idx) in points"
               :key="idx"
@@ -191,48 +190,123 @@
                 >
                   <div class="flex items-center justify-between gap-2">
                     <span class="font-semibold text-sm text-gray-900">
-                      {{ idx === 0 ? 'Ruta más rápida' : `Alternativa ${idx}` }}
+                      {{ opt.wasFastest ? 'Ruta más rápida' : `Alternativa ${idx}` }}
                     </span>
                     <span class="flex items-center gap-1 text-xs font-bold text-brand-blue flex-shrink-0">
                       <i class="fa-solid fa-gas-pump"></i> {{ opt.stations.length }}
                     </span>
                   </div>
                   <p class="text-xs text-gray-500 mt-1">{{ opt.distanceKm }} km &middot; {{ opt.durationLabel }}</p>
+                  <p v-if="opt.crossesBorder" class="text-[11px] font-semibold text-amber-600 mt-1 flex items-center gap-1">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Pasa por Estados Unidos
+                  </p>
                 </button>
               </div>
             </div>
 
-            <div v-else-if="routeSummary" class="mt-4 flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm">
-              <div>
-                <p class="text-gray-500 text-xs">Distancia</p>
-                <p class="font-bold text-gray-900">{{ routeSummary.distanceKm }} km</p>
+            <div v-else-if="routeSummary" class="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm">
+              <div class="flex items-center gap-4">
+                <div>
+                  <p class="text-gray-500 text-xs">Distancia</p>
+                  <p class="font-bold text-gray-900">{{ routeSummary.distanceKm }} km</p>
+                </div>
+                <div>
+                  <p class="text-gray-500 text-xs">Duración aprox.</p>
+                  <p class="font-bold text-gray-900">{{ routeSummary.durationLabel }}</p>
+                </div>
               </div>
-              <div>
-                <p class="text-gray-500 text-xs">Duración aprox.</p>
-                <p class="font-bold text-gray-900">{{ routeSummary.durationLabel }}</p>
-              </div>
+              <p v-if="routeOptions[selectedRouteIndex]?.crossesBorder" class="text-[11px] font-semibold text-amber-600 mt-2 flex items-center gap-1">
+                <i class="fa-solid fa-triangle-exclamation"></i> Esta ruta pasa por Estados Unidos
+              </p>
             </div>
 
             <div v-if="stations.length" class="mt-5">
               <h3 class="text-sm font-bold text-gray-900 mb-2">
-                Estaciones en la ruta ({{ stations.length }})
+                Estaciones en la ruta ({{ filteredStations.length }}<template v-if="filteredStations.length !== stations.length">/{{ stations.length }}</template>)
               </h3>
+
+              <div class="mb-3">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-gas-pump text-brand-blue"></i> Productos
+                  </p>
+                  <button
+                    v-if="productFilter.length"
+                    type="button"
+                    @click="clearProductFilter"
+                    class="text-[11px] font-medium text-gray-400 hover:text-red-500"
+                  >
+                    Quitar filtro
+                  </button>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button
+                    v-for="fuel in FUEL_ORDER"
+                    :key="fuel"
+                    type="button"
+                    @click="toggleProductFilter(fuel)"
+                    class="p-2.5 bg-white border-2 rounded-xl flex items-center gap-2 transition-all text-left"
+                    :class="productFilter.includes(fuel) ? fuelFilterActiveClass(fuel) : 'border-gray-200 hover:border-gray-300'"
+                  >
+                    <div
+                      class="w-4 h-4 border-2 rounded-md flex items-center justify-center flex-shrink-0"
+                      :class="productFilter.includes(fuel) ? fuelFilterCheckClass(fuel) : 'border-gray-300 bg-white'"
+                    >
+                      <i v-if="productFilter.includes(fuel)" class="fa-solid fa-check text-[9px] text-white"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-700">{{ fuelLabel(fuel) }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="filteredStations.length === 0" class="text-sm text-gray-500 mb-2">
+                Ninguna estación en la ruta tiene los productos filtrados.
+              </div>
+
               <div class="space-y-2">
                 <div
-                  v-for="s in stations"
+                  v-for="s in filteredStations"
                   :key="s.id"
-                  class="border border-gray-200 rounded-xl p-3 hover:border-brand-blue/50 transition-colors"
+                  @click="selectStationFromList(s)"
+                  class="border border-gray-200 rounded-xl p-3 hover:border-brand-blue/50 cursor-pointer transition-colors space-y-2"
                 >
-                  <p class="font-semibold text-gray-900 text-sm truncate">{{ s.name || 'Estación de servicio' }}</p>
-                  <p class="text-xs text-gray-500 truncate">
-                    {{ [s.address?.city, s.address?.state].filter(Boolean).join(', ') }}
-                  </p>
-                  <p v-if="stationPL(s)" class="text-[11px] text-gray-400 mt-1">
-                    PL: {{ stationPL(s) }}
-                  </p>
+                  <div>
+                    <p class="font-semibold text-gray-900 text-sm truncate">{{ s.name || 'Estación de servicio' }}</p>
+                    <p v-if="previewAddress(s)" class="text-xs text-gray-500 truncate">
+                      {{ previewAddress(s) }}
+                    </p>
+                  </div>
+
+                  <div class="flex flex-wrap gap-1.5">
+                    <span
+                      v-if="stationPL(s)"
+                      class="px-2 py-0.5 bg-blue-50 text-brand-blue text-[10px] font-bold rounded-lg border border-blue-100"
+                    >
+                      {{ stationPL(s) }}
+                    </span>
+                    <span
+                      v-if="stationFolio(s)"
+                      class="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-medium rounded-lg"
+                    >
+                      Folio: {{ stationFolio(s) }}
+                    </span>
+                  </div>
+
                   <p v-if="stationCoords(s)" class="text-[11px] text-gray-400 font-mono">
-                    {{ stationCoords(s) }}
+                    <i class="fa-solid fa-location-crosshairs mr-1"></i>{{ stationCoords(s) }}
                   </p>
+
+                  <div v-if="stationFuels(s).length" class="flex flex-wrap gap-1.5">
+                    <span
+                      v-for="fuel in stationFuels(s)"
+                      :key="fuel"
+                      :class="fuelBadgeClass(fuel)"
+                      class="px-2 py-0.5 rounded-full text-[10px] font-bold text-white flex items-center gap-1"
+                    >
+                      <i class="fa-solid fa-gas-pump text-[9px]"></i>
+                      {{ fuelLabel(fuel) }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -241,24 +315,25 @@
               No se encontraron estaciones cercanas a esta ruta.
             </div>
             </div>
-
-            <!-- Aviso de que hay más contenido abajo (solo móvil). Es un botón real
-                 (no solo decorativo) para que el toque no "atraviese" a lo que hay detrás -->
-            <button
-              v-if="showScrollHint"
-              type="button"
-              @click="scrollPanelHint"
-              class="lg:hidden absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-slate-50 via-slate-50/95 to-transparent flex items-end justify-center pb-1.5"
-            >
-              <span class="w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center">
-                <i class="fa-solid fa-chevron-down text-brand-blue text-sm animate-bounce"></i>
-              </span>
-            </button>
           </div>
 
-          <!-- Mapa -->
-          <div class="flex-1 relative min-h-[300px] lg:min-h-0">
+          <!-- Mapa: en móvil ocupa el modal completo (no se divide con el formulario);
+               aparece al trazar, al elegir un punto en el mapa, o con "Editar ruta" -->
+          <div
+            class="relative min-h-[300px] lg:min-h-0 lg:flex-1 lg:block"
+            :class="showMobileMap ? 'flex-1 block' : 'hidden'"
+          >
             <div ref="mapEl" class="absolute inset-0"></div>
+
+            <button
+              v-if="hasRoute && !mobileShowForm && pickIndex === null"
+              @click="editRouteMobile"
+              type="button"
+              class="lg:hidden absolute top-3 left-3 z-20 text-brand-blue text-sm font-semibold border-[3px] border-transparent pl-3 pr-4 py-2 rounded-full shadow-lg flex items-center gap-2"
+              style="background: linear-gradient(white, white) padding-box, linear-gradient(90deg, #2573D9, #8434E1) border-box;"
+            >
+              <i class="fa-solid fa-pen-to-square"></i> Editar ruta
+            </button>
 
             <div
               v-if="pickIndex !== null"
@@ -276,6 +351,63 @@
                 <p class="text-gray-600 text-sm">Calculando ruta y buscando estaciones...</p>
               </div>
             </div>
+
+            <!-- Vista previa de estación (clic en la lista o en un pin del mapa):
+                 tarjeta flotante sobre el mapa, no tapa el formulario ni la lista -->
+            <div
+              v-if="previewStation"
+              class="absolute bottom-3 right-3 left-3 sm:left-auto sm:w-[320px] z-30 bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[70%] flex flex-col"
+            >
+              <div class="bg-gradient-to-r from-brand-blue to-brand-purple px-4 py-3 flex items-center justify-between flex-shrink-0">
+                <h3 class="text-white font-bold text-sm truncate pr-2">
+                  {{ previewStation.name || 'Estación de servicio' }}
+                </h3>
+                <button @click="previewStation = null" type="button" class="text-white/80 hover:text-white flex-shrink-0">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <div class="p-4 space-y-3 overflow-y-auto">
+                <p v-if="previewAddress(previewStation)" class="text-sm text-gray-600">
+                  {{ previewAddress(previewStation) }}
+                </p>
+
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    v-if="stationPL(previewStation)"
+                    class="px-2.5 py-1 bg-blue-50 text-brand-blue text-xs font-bold rounded-lg border border-blue-100"
+                  >
+                    {{ stationPL(previewStation) }}
+                  </span>
+                  <span
+                    v-if="stationFolio(previewStation)"
+                    class="px-2.5 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg"
+                  >
+                    Folio: {{ stationFolio(previewStation) }}
+                  </span>
+                </div>
+
+                <p v-if="stationCoords(previewStation)" class="text-xs text-gray-400 font-mono">
+                  <i class="fa-solid fa-location-crosshairs mr-1"></i>
+                  {{ stationCoords(previewStation) }}
+                </p>
+
+                <div v-if="stationFuels(previewStation).length">
+                  <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Productos</p>
+                  <div class="flex flex-wrap gap-2">
+                    <span
+                      v-for="fuel in stationFuels(previewStation)"
+                      :key="fuel"
+                      :class="fuelBadgeClass(fuel)"
+                      class="px-3 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-1.5"
+                    >
+                      <i class="fa-solid fa-gas-pump text-[10px]"></i>
+                      {{ fuelLabel(fuel) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -288,6 +420,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { MAPBOX_TOKEN, API_BASE_URL, useGooglePlacesAutocomplete } from 'orsan-maps-vue'
+import { isInsideMexico } from '../../data/mexicoBounds.js'
 
 defineEmits(['close'])
 
@@ -298,22 +431,8 @@ const mapEl = ref(null)
 let map = null
 let waypointMarkers = []
 let stationMarkers = []
+let stationMarkersById = new Map()
 let userLocationMarker = null
-
-const formPanelEl = ref(null)
-const formContentEl = ref(null)
-const showScrollHint = ref(false)
-
-function updateScrollHint() {
-  const el = formPanelEl.value
-  if (!el) {
-    showScrollHint.value = false
-    return
-  }
-  const hasOverflow = el.scrollHeight > el.clientHeight + 4
-  const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 16
-  showScrollHint.value = hasOverflow && !nearBottom
-}
 
 // Un buscador de Google Places por cada posición posible (origen + paradas + destino).
 // Los composables solo se pueden invocar durante el setup del componente, así que
@@ -338,11 +457,79 @@ const routeSummary = ref(null)
 const stations = ref([])
 const routeOptions = ref([])
 const selectedRouteIndex = ref(0)
+const previewStation = ref(null)
+const productFilter = ref([])
+
+// En móvil el mapa ocupa el modal completo en vez de compartir pantalla con
+// el formulario. El mapa aparece: mientras se traza/hay una ruta, mientras
+// se está eligiendo un punto en el mapa, o si el usuario pidió "Editar ruta"
+// para volver; se oculta de nuevo solo al terminar de elegir un punto.
+const hasRoute = computed(() => tracing.value || routeOptions.value.length > 0)
+const mobileShowForm = ref(false)
+const showMobileMap = computed(() => {
+  if (pickIndex.value !== null) return true
+  if (mobileShowForm.value) return false
+  return hasRoute.value
+})
+
+function editRouteMobile() {
+  mobileShowForm.value = true
+}
 
 const allPointsReady = computed(() => points.value.every(p => p.place?.location))
 
+const FUEL_ORDER = ['premium', 'magna', 'diesel', 'dieselUba']
+
+const availableFuelTypes = computed(() => {
+  const present = new Set(stations.value.flatMap(s => stationFuels(s)))
+  return FUEL_ORDER.filter(f => present.has(f))
+})
+
+const filteredStations = computed(() => {
+  if (productFilter.value.length === 0) return stations.value
+  return stations.value.filter(s => stationFuels(s).some(f => productFilter.value.includes(f)))
+})
+
+function toggleProductFilter(fuel) {
+  productFilter.value = productFilter.value.includes(fuel)
+    ? productFilter.value.filter(f => f !== fuel)
+    : [...productFilter.value, fuel]
+  plotStations(filteredStations.value)
+}
+
+function clearProductFilter() {
+  productFilter.value = []
+  plotStations(filteredStations.value)
+}
+
+// Clic en una tarjeta de la lista: abre la tarjeta flotante Y hace zoom +
+// rebote en el mapa para señalar cuál estación es
+function selectStationFromList(station) {
+  previewStation.value = station
+  mobileShowForm.value = false // en móvil, mostrar el mapa para ver dónde está la estación
+  highlightStation(station)
+}
+
+// Mismos colores que el filtro de productos del mapa principal (FilterPanel.vue)
+function fuelFilterActiveClass(fuel) {
+  if (fuel === 'premium') return 'border-red-500 bg-red-50'
+  if (fuel === 'magna') return 'border-green-500 bg-green-50'
+  if (fuel === 'diesel') return 'border-slate-600 bg-slate-50'
+  return 'border-slate-700 bg-slate-50'
+}
+
+function fuelFilterCheckClass(fuel) {
+  if (fuel === 'premium') return 'border-red-500 bg-red-500'
+  if (fuel === 'magna') return 'border-green-500 bg-green-500'
+  if (fuel === 'diesel') return 'border-slate-600 bg-slate-600'
+  return 'border-slate-700 bg-slate-700'
+}
+
 function stationPL(station) {
-  return station.plCode ?? station.pl_code ?? null
+  // El permiso CRE viene formateado como "PL/573/EXP/ES/2015"; plCode/pl_code
+  // no trae ese valor (por eso salía cortado), el campo correcto es el mismo
+  // que usa el panel de detalles del mapa principal
+  return station.creID ?? station.creId ?? station.cre_id ?? null
 }
 
 function stationCoords(station) {
@@ -350,6 +537,74 @@ function stationCoords(station) {
   const lng = parseFloat(station.location?.longitude)
   if (!isFinite(lat) || !isFinite(lng)) return null
   return `${lat.toFixed(5)}, ${lng.toFixed(5)}`
+}
+
+function stationFolio(station) {
+  return station.folioPemex ?? station.folio_pemex ?? null
+}
+
+function previewAddress(station) {
+  const a = station.address
+  if (!a) return ''
+  return [a.street, a.city, a.state].filter(Boolean).join(', ')
+}
+
+const FUEL_LABELS = { premium: 'Premium', magna: 'Magna', diesel: 'Diésel', dieselUba: 'Diésel UBA' }
+const FUEL_BADGE_CLASSES = {
+  premium: 'bg-red-500',
+  magna: 'bg-green-500',
+  diesel: 'bg-slate-700',
+  dieselUba: 'bg-slate-700'
+}
+
+function fuelLabel(fuel) {
+  return FUEL_LABELS[fuel] || fuel
+}
+
+function fuelBadgeClass(fuel) {
+  return FUEL_BADGE_CLASSES[fuel] || 'bg-gray-500'
+}
+
+// Misma lógica que el panel de detalles del mapa principal (StationDetailsPanel.vue)
+// para que "traza tu ruta" muestre exactamente los mismos productos disponibles
+function stationFuels(station) {
+  const services = []
+  const stationServices = station.services || []
+  const priceRaw = {
+    premium: station.precioPremium ?? station.PrecioPremium ?? station.price_premium ?? null,
+    magna: station.precioMagna ?? station.PrecioMagna ?? station.price_regular ?? null,
+    diesel: station.precioDiesel ?? station.PrecioDiesel ?? station.price_diesel ?? null,
+    dieselUba: station.price_diesel_uba ?? null
+  }
+  const hayDatosDePrecio = Object.values(priceRaw).some(v => v != null)
+
+  if (Array.isArray(stationServices) && stationServices.length > 0) {
+    stationServices.forEach(service => {
+      const slug = (typeof service === 'string' ? service : (service.slug || '')).toLowerCase()
+      const name = (typeof service === 'string' ? service : (service.name || '')).toLowerCase()
+      if (slug === 'premium' || name.includes('premium')) services.push('premium')
+      if (slug === 'magna' || name.includes('magna') || name.includes('regular')) services.push('magna')
+      if (name.includes('diesel') && name.includes('uba')) services.push('dieselUba')
+      else if (slug === 'diesel' || name.includes('diesel')) services.push('diesel')
+    })
+  }
+
+  if (priceRaw.premium != null && parseFloat(priceRaw.premium) > 0) services.push('premium')
+  if (priceRaw.magna != null && parseFloat(priceRaw.magna) > 0) services.push('magna')
+  if (priceRaw.diesel != null && parseFloat(priceRaw.diesel) > 0) services.push('diesel')
+  if (priceRaw.dieselUba != null && parseFloat(priceRaw.dieselUba) > 0) services.push('dieselUba')
+  if (station.amenities?.hasDieselUba) services.push('dieselUba')
+
+  const unique = [...new Set(services)].filter(svc => {
+    const raw = priceRaw[svc]
+    if (raw != null) return parseFloat(raw) > 0
+    return true
+  })
+
+  if (unique.length === 0 && !hayDatosDePrecio && stationServices.length === 0) {
+    return ['premium', 'magna', 'diesel']
+  }
+  return unique
 }
 
 function pointLabel(index) {
@@ -478,12 +733,6 @@ function movePoint(index, direction) {
   reorderPoints(index, index + direction)
 }
 
-function scrollPanelHint() {
-  const el = formPanelEl.value
-  if (!el) return
-  el.scrollBy({ top: Math.round(el.clientHeight * 0.6), behavior: 'smooth' })
-}
-
 function addStop() {
   if (points.value.length >= MAX_POINTS) return
   points.value.splice(points.value.length - 1, 0, { query: '', place: null, showPredictions: false })
@@ -495,13 +744,32 @@ function removeStop(index) {
   plotWaypointMarkers()
 }
 
+// En Firefox y Edge, la primera vez que se concede el permiso de ubicación,
+// la solicitud que disparó el diálogo a veces no se resuelve (falla con un
+// error que no es "permiso denegado"): el permiso ya quedó guardado, pero esa
+// llamada en particular se pierde. Se reintenta una vez automáticamente en
+// vez de obligar al usuario a refrescar la página.
+function getCurrentPositionWithRetry(onSuccess, onError, options) {
+  navigator.geolocation.getCurrentPosition(
+    onSuccess,
+    (err) => {
+      if (err.code === err.PERMISSION_DENIED) {
+        onError(err)
+        return
+      }
+      navigator.geolocation.getCurrentPosition(onSuccess, onError, options)
+    },
+    options
+  )
+}
+
 function usePointCurrentLocation(index) {
   if (!navigator.geolocation) {
     error.value = 'Tu navegador no soporta geolocalización.'
     return
   }
   locatingIndex.value = index
-  navigator.geolocation.getCurrentPosition(
+  getCurrentPositionWithRetry(
     (pos) => {
       const { latitude, longitude } = pos.coords
       points.value[index].place = {
@@ -692,21 +960,84 @@ function showUserLocationMarker(lat, lng) {
   userLocationMarker = new mapboxgl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map)
 }
 
+// Marcador propio (no el pin por defecto de Mapbox) para poder animar el
+// "rebote" en un elemento interno sin pelear con el transform de posición
+// que Mapbox aplica al elemento raíz del marcador
+function createStationMarkerEl() {
+  const outer = document.createElement('div')
+  const inner = document.createElement('div')
+  inner.className = 'ug-station-marker-inner'
+  inner.innerHTML = '<i class="fa-solid fa-gas-pump"></i>'
+  outer.appendChild(inner)
+  return outer
+}
+
 function plotStations(list) {
   clearMarkers(stationMarkers)
+  stationMarkersById = new Map()
   stationMarkers = list
     .filter(s => s.location?.latitude != null && s.location?.longitude != null)
     .map(s => {
-      const marker = new mapboxgl.Marker({ color: '#2563eb' })
+      const marker = new mapboxgl.Marker({ element: createStationMarkerEl() })
         .setLngLat([parseFloat(s.location.longitude), parseFloat(s.location.latitude)])
-        .setPopup(new mapboxgl.Popup({ offset: 16 }).setHTML(`<strong>${s.name || 'Estación'}</strong>`))
         .addTo(map)
       marker.getElement().style.zIndex = '1'
+      marker.getElement().style.cursor = 'pointer'
+      marker.getElement().addEventListener('click', (e) => {
+        e.stopPropagation()
+        previewStation.value = s
+      })
+      // Si esta estación ya estaba seleccionada antes de reconstruir los pines
+      // (p.ej. al cambiar el filtro), que se note cuál es sin tener que darle clic de nuevo
+      if (previewStation.value?.id != null && s.id === previewStation.value.id) {
+        marker.getElement().querySelector('.ug-station-marker-inner')?.classList.add('ug-station-marker-selected')
+      }
+      if (s.id != null) stationMarkersById.set(s.id, marker)
       return marker
     })
 }
 
-async function buildRouteOption(route, refLat) {
+// Cambia el pin a morado cuando su estación es la seleccionada (tarjeta
+// flotante abierta), sin reconstruir todos los marcadores
+watch(previewStation, (newStation, oldStation) => {
+  if (oldStation?.id != null) {
+    stationMarkersById.get(oldStation.id)?.getElement()
+      .querySelector('.ug-station-marker-inner')?.classList.remove('ug-station-marker-selected')
+  }
+  if (newStation?.id != null) {
+    stationMarkersById.get(newStation.id)?.getElement()
+      .querySelector('.ug-station-marker-inner')?.classList.add('ug-station-marker-selected')
+  }
+})
+
+// Al hacer clic en una tarjeta de la lista: en vez de tapar la pantalla con
+// la vista previa, se hace zoom hacia su pin en el mapa y se anima para
+// señalar cuál es
+function highlightStation(station) {
+  const marker = station.id != null ? stationMarkersById.get(station.id) : null
+  if (!marker || !map) return
+  const lngLat = marker.getLngLat()
+  map.flyTo({ center: [lngLat.lng, lngLat.lat], zoom: Math.max(map.getZoom(), 14), duration: 600 })
+
+  const inner = marker.getElement().querySelector('.ug-station-marker-inner')
+  if (!inner) return
+  inner.classList.remove('ug-marker-bounce')
+  void inner.offsetWidth // reinicia la animación si se hace clic varias veces seguidas
+  inner.classList.add('ug-marker-bounce')
+}
+
+// Mapbox a veces calcula que la ruta "más rápida" entre dos ciudades mexicanas
+// cruza por Estados Unidos (carreteras más rápidas del otro lado de la
+// frontera). Se detecta muestreando la ruta y viendo qué tanto de ella cae
+// fuera del polígono de México.
+function routeCrossesBorder(coords) {
+  const samples = sampleRoute(coords, 20)
+  if (samples.length === 0) return false
+  const outsideCount = samples.filter(([lng, lat]) => !isInsideMexico(lng, lat)).length
+  return outsideCount / samples.length > 0.1
+}
+
+async function buildRouteOption(route, refLat, wasFastest) {
   const totalMinutes = Math.round(route.duration / 60)
 
   const samples = sampleRoute(route.geometry.coordinates, 15)
@@ -731,7 +1062,9 @@ async function buildRouteOption(route, refLat) {
     durationLabel: totalMinutes >= 60
       ? `${Math.floor(totalMinutes / 60)} h ${totalMinutes % 60} min`
       : `${totalMinutes} min`,
-    stations: routeStations
+    stations: routeStations,
+    crossesBorder: routeCrossesBorder(route.geometry.coordinates),
+    wasFastest
   }
 }
 
@@ -742,7 +1075,9 @@ function selectRoute(index) {
   routeSummary.value = { distanceKm: option.distanceKm, durationLabel: option.durationLabel }
   stations.value = option.stations
   drawRoute(option.geometry)
-  plotStations(option.stations)
+  // Respeta el filtro de producto activo (si ya estabas filtrando por diésel
+  // y cambias de opción de ruta o reordenas, el mapa se queda filtrado igual)
+  plotStations(filteredStations.value)
 }
 
 async function traceRoute() {
@@ -755,6 +1090,7 @@ async function traceRoute() {
   routeSummary.value = null
   routeOptions.value = []
   selectedRouteIndex.value = 0
+  mobileShowForm.value = false
 
   try {
     const coordsStr = points.value.map(p => `${p.place.location.lng},${p.place.location.lat}`).join(';')
@@ -766,7 +1102,10 @@ async function traceRoute() {
     if (!routes.length) throw new Error('No se encontró una ruta entre esos puntos.')
 
     const refLat = points.value.reduce((sum, p) => sum + p.place.location.lat, 0) / points.value.length
-    routeOptions.value = await Promise.all(routes.map(r => buildRouteOption(r, refLat)))
+    const built = await Promise.all(routes.map((r, i) => buildRouteOption(r, refLat, i === 0)))
+    // Priorizar las rutas que se quedan dentro de México sobre las que cruzan
+    // a EE. UU., aunque Mapbox las haya marcado como "más rápidas"
+    routeOptions.value = built.sort((a, b) => Number(a.crossesBorder) - Number(b.crossesBorder))
 
     plotWaypointMarkers()
     selectRoute(0)
@@ -783,13 +1122,8 @@ watch(pickIndex, (val) => {
 })
 
 let mapResizeObserver = null
-let formResizeObserver = null
 
 onMounted(() => {
-  formResizeObserver = new ResizeObserver(() => updateScrollHint())
-  if (formContentEl.value) formResizeObserver.observe(formContentEl.value)
-  requestAnimationFrame(updateScrollHint)
-
   mapboxgl.accessToken = MAPBOX_TOKEN
   map = new mapboxgl.Map({
     container: mapEl.value,
@@ -808,7 +1142,7 @@ onMounted(() => {
   mapResizeObserver.observe(mapEl.value)
 
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
+    getCurrentPositionWithRetry(
       (pos) => {
         const { latitude, longitude } = pos.coords
         showUserLocationMarker(latitude, longitude)
@@ -825,7 +1159,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   debounceTimers.forEach(t => clearTimeout(t))
   if (mapResizeObserver) mapResizeObserver.disconnect()
-  if (formResizeObserver) formResizeObserver.disconnect()
   if (map) map.remove()
 })
 </script>
@@ -845,5 +1178,35 @@ onBeforeUnmount(() => {
   0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
   70% { box-shadow: 0 0 0 14px rgba(37, 99, 235, 0); }
   100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
+.ug-station-marker-inner {
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  background: #2563eb;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.ug-station-marker-inner.ug-station-marker-selected {
+  background: #7c3aed;
+}
+
+.ug-marker-bounce {
+  animation: ug-marker-bounce 0.7s ease-out;
+}
+
+@keyframes ug-marker-bounce {
+  0%, 100% { transform: scale(1) translateY(0); }
+  30% { transform: scale(1.4) translateY(-12px); }
+  55% { transform: scale(1) translateY(0); }
+  75% { transform: scale(1.15) translateY(-5px); }
 }
 </style>

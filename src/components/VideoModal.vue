@@ -2,7 +2,7 @@
   <!-- Agregamos py-12 o my-8 para darle espacio con las secciones de arriba y abajo -->
   <section class="w-full max-w-5xl mx-auto px-4 py-12">
     <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-gray-100">
-      
+
       <!-- Frame del video -->
       <div class="aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-md">
         <iframe
@@ -27,5 +27,4 @@
       </div>
 
     </div>
-  </section>
-</template>
+  </section
